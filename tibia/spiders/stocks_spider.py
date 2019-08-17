@@ -17,6 +17,7 @@ class BaseSpider:
         self.password = password
         self.session = None
         self.response = None
+        self.url = None
 
     def _create_data_login(self):
         return {
@@ -47,11 +48,12 @@ class BaseSpider:
         else:
             raise Exception('Could not authenticate')
 
-    def get_response(self, url, force_update=True):
+    def get_response(self, url, force_update=False):
         if not self.authenticated:
             self._authenticate()
-        if self.response and not force_update:
+        if self.response and self.url == url and not force_update:
             return self.response
+        self.url = url
         response = self.session.get(url)
         self.response = Selector(text=response.text)
         return self.response
@@ -130,7 +132,18 @@ class StockSpider(BaseSpider):
         data = [merge_keys_and_values(headers, row) for row in rows if row]
         if save:
             self.save_data(data, 'fundamentalistAnalysis', many=True)
-        return data
+        return dict(fundamentalistAnalysis=data)
+
+    def extract_all_fundamentalist_data(self, stock, save=True):
+        output = dict()
+        output.update(self.parse_fundamentalist_analysis_company_data(stock))
+        output.update(self.parse_fundamentalist_analysis_rate(stock))
+        output.update(self.parse_fundamentalist_analysis_video(stock))
+        output.update(self.parse_fundamentalist_analysis_chart(stock))
+        output.update(self.parse_fundamentalist_analysis_table(stock))
+        if save:
+            self.save_data(output, 'fundamentalistAnalysis', many=False)
+        return output
 
 
 def extract_from_company_data(row):
