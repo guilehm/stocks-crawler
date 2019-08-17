@@ -7,7 +7,7 @@ MONGO_URL = 'mongodb://localhost:27017/'
 DB_NAME = 'tibia'
 
 
-class StockSpider:
+class BaseSpider:
     def __init__(self, login, password, base_url=BASE_URL, mongo_url=MONGO_URL, db_name=DB_NAME):
         self.mongo_client = MongoClient(mongo_url)
         self.db = self.mongo_client[db_name]
