@@ -1,4 +1,5 @@
 import requests
+from scrapy.selector import Selector
 
 BASE_URL = 'https://eduardocavalcanti.com'
 
