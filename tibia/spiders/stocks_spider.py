@@ -57,3 +57,8 @@ def extract_from_links(node):
         code=node.xpath('text()').get().strip(),
         url=node.attrib['href'],
     )
+def extract_from_links(node, name='name'):
+    return {
+        name: node.xpath('text()').get().strip(),
+        'url': node.attrib['href']
+    }
