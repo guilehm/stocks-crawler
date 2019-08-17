@@ -53,8 +53,8 @@ class BaseSpider:
         if self.response and not force_update:
             return self.response
         response = self.session.get(url)
-        self.response = response
-        return Selector(text=response.text)
+        self.response = Selector(text=response.text)
+        return self.response
 
     def save_data(self, data, collection, many=False):
         collection = self.db[collection]
