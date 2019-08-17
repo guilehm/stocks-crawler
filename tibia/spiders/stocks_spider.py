@@ -77,6 +77,19 @@ class StockSpider(BaseSpider):
         url = f'{self.base_url}/an_fundamentalista/{stock}/'
         return self.get_response(url)
 
+    def parse_fundamentalist_analysis_company_data(self, stock, save=False):
+        response = self._get_response_fundamentalist_analysis(stock)
+        company, governance = response.xpath(
+            './/table[@class="table table-responsive table-condensed infoDados"]'
+        )
+        data = dict(
+            company=extract_from_company_data(company),
+            governance=extract_from_company_data(governance)
+        )
+        if save:
+            self.save_data(data, 'fundamentalistAnalysis', many=True)
+        return data
+
     def parse_fundamentalist_analysis_table(self, stock, save=False):
         response = self._get_response_fundamentalist_analysis(stock)
         table = response.xpath(
