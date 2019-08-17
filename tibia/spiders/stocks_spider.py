@@ -36,4 +36,11 @@ class StockSpider:
         if 'AFLT' in response.text:
             self.authenticated = True
             self.session = session
-        return self.authenticated
+        else:
+            raise Exception('Could not authenticate')
+
+    def get_response(self, url):
+        if not self.authenticated:
+            self._authenticate()
+        response = self.session.get(url)
+        return Selector(text=response.text)
