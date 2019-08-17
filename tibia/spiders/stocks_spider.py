@@ -47,7 +47,7 @@ class BaseSpider:
         else:
             raise Exception('Could not authenticate')
 
-    def get_response(self, url, force_update=False):
+    def get_response(self, url, force_update=True):
         if not self.authenticated:
             self._authenticate()
         if self.response and not force_update:
