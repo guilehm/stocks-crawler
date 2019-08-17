@@ -148,6 +148,7 @@ class StockSpider(BaseSpider):
         output.update(self.parse_fundamentalist_analysis_chart(stock, url=url))
         output.update(self.parse_fundamentalist_analysis_table(stock, url=url))
         if save:
+            print(f'saving for {stock}')
             self.save_data(output, 'fundamentalistAnalysis')
         return output
 
@@ -155,7 +156,6 @@ class StockSpider(BaseSpider):
         stocks_collection = self.db.stocks
         stocks = [stock for stock in stocks_collection.find()]
         for stock in stocks:
-            print('saving for', stock['code'])
             self.extract_all_fundamentalist_data(stock=stock['code'], save=True, url=stock['url'])
 
 
