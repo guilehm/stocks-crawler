@@ -58,14 +58,17 @@ class BaseSpider:
             return collection.insert_many(data)
         return collection.insert_one(data)
 
+
 class StockSpider(BaseSpider):
-    def parse_stocks(self, url):
+    def parse_stocks(self, url, save=True):
         response = self.get_response(url)
         stocks = [extract_from_links(link, 'code') for link in response.xpath('//h2[@class="entry-title"]/a')]
         names = [name.strip() for name in response.xpath(
             '//article//div[@class="entry-content entry-summary"]//text()'
         ).getall() if name and name.strip()]
         [stock.update(name=name) for stock, name in list(zip(stocks, names))]
+        if save:
+            self.save_data(stocks, 'stocks', many=True)
         return stocks
 
 
