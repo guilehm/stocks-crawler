@@ -77,7 +77,7 @@ class StockSpider(BaseSpider):
         url = f'{self.base_url}/an_fundamentalista/{stock}/'
         return self.get_response(url)
 
-    def parse_fundamentalist_analysis(self, stock, save=False):
+    def parse_fundamentalist_analysis_table(self, stock, save=False):
         response = self._get_response_fundamentalist_analysis(stock)
         table = response.xpath(
             '//table[@class="table table-hover table-condensed table-responsive analise"]'
