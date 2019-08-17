@@ -77,6 +77,22 @@ class StockSpider(BaseSpider):
         url = f'{self.base_url}/an_fundamentalista/{stock}/'
         return self.get_response(url)
 
+    def parse_fundamentalist_analysis(self, stock, save=False):
+        response = self._get_response_fundamentalist_analysis(stock)
+        table = response.xpath(
+            '//table[@class="table table-hover table-condensed table-responsive analise"]'
+        )
+        headers = [text.strip() for text in table.xpath(
+            './thead/tr//text()'
+        ).getall() if text.strip()]
+        trs = table.xpath('./tbody/tr')
+        rows = [extract_from_tr(tr) for tr in trs if tr]
+        data = [merge_keys_and_values(headers, row) for row in rows if row]
+        if save:
+            self.save_data(data, 'fundamentalistAnalysis', many=True)
+        return data
+
+
 def extract_from_links(node, name='name'):
     return {
         name: node.xpath('text()').get().strip(),
