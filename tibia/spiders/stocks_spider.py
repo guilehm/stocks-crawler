@@ -82,3 +82,14 @@ def extract_from_links(node, name='name'):
         name: node.xpath('text()').get().strip(),
         'url': node.attrib['href']
     }
+
+
+def extract_from_tr(tr):
+    data = [a.strip() for a in tr.xpath('.//text()').getall() if a.strip()]
+    return data or None
+
+
+def merge_keys_and_values(keys, values):
+    if values:
+        tuples = list(zip(keys, values))
+        return {key.replace('.', ''): value for key, value in tuples}
