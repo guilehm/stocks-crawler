@@ -77,6 +77,17 @@ class StockSpider(BaseSpider):
         url = f'{self.base_url}/an_fundamentalista/{stock}/'
         return self.get_response(url)
 
+    def parse_fundamentalist_analysis_rate(self, stock):
+        response = self._get_response_fundamentalist_analysis(stock)
+        data = [text.strip() for text in response.xpath(
+            '//span[contains(@class, "rating-result  mrp-shortcode")]/span/text()'
+        ).getall()]
+        data = [float(text.replace('/10', '').strip('(').strip(')')) for text in data]
+        return dict(
+            rate=data[0],
+            votes=data[1],
+        )
+
     def parse_fundamentalist_analysis_company_data(self, stock, save=False):
         response = self._get_response_fundamentalist_analysis(stock)
         company, governance = response.xpath(
