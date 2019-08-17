@@ -35,10 +35,11 @@ class StockSpider:
 
     def _authenticate(self):
         session = requests.session()
-        response = session.post(
+        session.post(
             f'{self.base_url}/wp-admin/admin-ajax.php',
             data=self._create_data_login(),
         )
+        response = session.get(f'{self.base_url}/dashboard/')
         if 'AFLT' in response.text:
             self.authenticated = True
             self.session = session
