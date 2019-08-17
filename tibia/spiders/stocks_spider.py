@@ -73,6 +73,9 @@ class StockSpider(BaseSpider):
             self.save_data(stocks, 'stocks', many=True)
         return stocks
 
+    def _get_response_fundamentalist_analysis(self, stock):
+        url = f'{self.base_url}/an_fundamentalista/{stock}/'
+        return self.get_response(url)
 
 def extract_from_links(node, name='name'):
     return {
