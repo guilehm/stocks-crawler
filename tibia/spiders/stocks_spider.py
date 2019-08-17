@@ -60,7 +60,7 @@ class BaseSpider:
 
 
 class StockSpider(BaseSpider):
-    def parse_stocks(self, url, save=True):
+    def parse_stocks(self, url, save=False):
         response = self.get_response(url)
         stocks = [extract_from_links(link, 'code') for link in response.xpath(
             '//h2[@class="entry-title"]/a'
