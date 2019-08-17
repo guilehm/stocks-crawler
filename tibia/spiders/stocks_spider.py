@@ -92,6 +92,12 @@ class StockSpider(BaseSpider):
             votes=data[1],
         )
 
+    def parse_fundamentalist_analysis_video(self, stock):
+        response = self._get_response_fundamentalist_analysis(stock)
+        return dict(
+            video=response.xpath('.//section[@class="analise-video"]//iframe/@src').get('').strip('//')
+        )
+
     def parse_fundamentalist_analysis_company_data(self, stock, save=False):
         response = self._get_response_fundamentalist_analysis(stock)
         company, governance = response.xpath(
