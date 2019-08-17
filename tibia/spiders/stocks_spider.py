@@ -1,6 +1,11 @@
+import requests
+
+BASE_URL = 'https://eduardocavalcanti.com'
+
+
 class StockSpider:
-    def __init__(self, url, login, password):
-        self.url = url
+    def __init__(self, login, password, base_url=BASE_URL):
+        self.base_url = base_url
         self.authenticated = False
         self.login = login
         self.password = password
@@ -22,3 +27,9 @@ class StockSpider:
             'arm_nonce_check': '80161f9f45'
         }
 
+    def authenticated(self):
+        session = requests.session()
+        session.post(
+            f'{self.base_url}/wp-admin/admin-ajax.php',
+            data=self._create_data_login(),
+        )
