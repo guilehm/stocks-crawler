@@ -137,19 +137,35 @@ class StockSpider(BaseSpider):
         rows = [extract_from_tr(tr) for tr in trs if tr]
         data = [merge_keys_and_values(headers, row) for row in rows if row]
         if save:
-            self.save_data(data, 'fundamentalistAnalysis', many=True)
+            self.save_data(data, 'fundamentalistAnalysis')
         return dict(fundamentalistAnalysis=data)
 
-    def extract_all_fundamentalist_data(self, stock, save=True):
+    def extract_all_fundamentalist_data(self, stock, save=False, url=None):
         output = dict()
-        output.update(self.parse_fundamentalist_analysis_company_data(stock))
-        output.update(self.parse_fundamentalist_analysis_rate(stock))
-        output.update(self.parse_fundamentalist_analysis_video(stock))
-        output.update(self.parse_fundamentalist_analysis_chart(stock))
-        output.update(self.parse_fundamentalist_analysis_table(stock))
+        output.update(self.parse_fundamentalist_analysis_company_data(stock, url=url))
+        output.update(self.parse_fundamentalist_analysis_rate(stock, url=url))
+        output.update(self.parse_fundamentalist_analysis_video(stock, url=url))
+        output.update(self.parse_fundamentalist_analysis_chart(stock, url=url))
+        output.update(self.parse_fundamentalist_analysis_table(stock, url=url))
         if save:
-            self.save_data(output, 'fundamentalistAnalysis', many=False)
+            self.save_data(output, 'fundamentalistAnalysis')
         return output
+
+    def extract_data_for_all_stocks(self):
+        stocks_collection = self.db.stocks
+        stocks = [stock for stock in stocks_collection.find()]
+        for stock in stocks:
+            print('saving for', stock['code'])
+            self.extract_all_fundamentalist_data(stock=stock['code'], save=True, url=stock['url'])
+
+
+def convert_to_float(value):
+    try:
+        converted = float(value)
+    except ValueError:
+        converted = value.replace(',', '.')
+        return convert_to_float(converted)
+    return converted
 
 
 def extract_from_company_data(row):
