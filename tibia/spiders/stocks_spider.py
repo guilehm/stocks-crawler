@@ -77,42 +77,43 @@ class StockSpider(BaseSpider):
         ).getall() if name and name.strip()]
         [stock.update(name=name) for stock, name in list(zip(stocks, names))]
         if save:
-            self.save_data(stocks, 'stocks', many=True)
+            self.save_data(stocks, 'stocks')
         return stocks
 
-    def _get_response_fundamentalist_analysis(self, stock):
-        url = f'{self.base_url}/an_fundamentalista/{stock}/'
+    def _get_response_fundamentalist_analysis(self, stock, url=None):
+        if not url:
+            url = f'{self.base_url}/an_fundamentalista/{stock}/'
         return self.get_response(url)
 
-    def parse_fundamentalist_analysis_rate(self, stock):
-        response = self._get_response_fundamentalist_analysis(stock)
+    def parse_fundamentalist_analysis_rate(self, stock, url=None):
+        response = self._get_response_fundamentalist_analysis(stock, url)
         data = [text.strip() for text in response.xpath(
             '//span[contains(@class, "rating-result  mrp-shortcode")]/span/text()'
         ).getall()]
-        data = [float(text.replace('/10', '').strip('(').strip(')')) for text in data]
+        data = [convert_to_float(text.replace('/10', '').strip('(').strip(')')) for text in data]
         return dict(
             rate=data[0],
             votes=data[1],
         )
 
-    def parse_fundamentalist_analysis_video(self, stock):
-        response = self._get_response_fundamentalist_analysis(stock)
+    def parse_fundamentalist_analysis_video(self, stock, url=None):
+        response = self._get_response_fundamentalist_analysis(stock, url)
         return dict(
             video=response.xpath(
                 './/section[@class="analise-video"]//iframe/@src'
             ).get('').strip('//')
         )
 
-    def parse_fundamentalist_analysis_chart(self, stock):
-        response = self._get_response_fundamentalist_analysis(stock)
+    def parse_fundamentalist_analysis_chart(self, stock, url=None):
+        response = self._get_response_fundamentalist_analysis(stock, url)
         return dict(
             chart=response.xpath(
                 '//section/iframe[contains(@src, "s.tradingview.com/bovespa/")]/@src'
             ).get()
         )
 
-    def parse_fundamentalist_analysis_company_data(self, stock, save=False):
-        response = self._get_response_fundamentalist_analysis(stock)
+    def parse_fundamentalist_analysis_company_data(self, stock, save=False, url=None):
+        response = self._get_response_fundamentalist_analysis(stock, url)
         company, governance = response.xpath(
             './/table[@class="table table-responsive table-condensed infoDados"]'
         )
@@ -121,11 +122,11 @@ class StockSpider(BaseSpider):
             governance=extract_from_company_data(governance)
         )
         if save:
-            self.save_data(data, 'fundamentalistAnalysis', many=True)
+            self.save_data(data, 'fundamentalistAnalysis')
         return data
 
-    def parse_fundamentalist_analysis_table(self, stock, save=False):
-        response = self._get_response_fundamentalist_analysis(stock)
+    def parse_fundamentalist_analysis_table(self, stock, save=False, url=None):
+        response = self._get_response_fundamentalist_analysis(stock, url)
         table = response.xpath(
             '//table[@class="table table-hover table-condensed table-responsive analise"]'
         )
