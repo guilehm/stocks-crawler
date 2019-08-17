@@ -51,3 +51,9 @@ class BaseSpider:
             self._authenticate()
         response = self.session.get(url)
         return Selector(text=response.text)
+
+def extract_from_links(node):
+    return dict(
+        code=node.xpath('text()').get().strip(),
+        url=node.attrib['href'],
+    )
