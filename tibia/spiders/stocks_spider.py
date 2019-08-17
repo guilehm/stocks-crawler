@@ -52,6 +52,11 @@ class BaseSpider:
         response = self.session.get(url)
         return Selector(text=response.text)
 
+    def save_data(self, data, collection, many=False):
+        collection = self.db[collection]
+        if many:
+            return collection.insert_many(data)
+        return collection.insert_one(data)
 
 class StockSpider(BaseSpider):
     def parse_stocks(self, url):
