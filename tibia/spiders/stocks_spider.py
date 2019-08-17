@@ -19,15 +19,15 @@ class StockSpider:
             'user_pass': self.password,
             'rememberme': '',
             'arm_action': 'please-login',
-            'redirect_to': 'https://eduardocavalcanti.com',
+            'redirect_to': self.base_url,
             'isAdmin': '0',
-            'referral_url': 'https://eduardocavalcanti.com/login/',
+            'referral_url': f'{self.base_url}/login/',
             'form_filter_kp': '9',
             'form_filter_st': '1566007996',
             'arm_nonce_check': '80161f9f45'
         }
 
-    def authenticate(self):
+    def _authenticate(self):
         session = requests.session()
         response = session.post(
             f'{self.base_url}/wp-admin/admin-ajax.php',
