@@ -27,9 +27,13 @@ class StockSpider:
             'arm_nonce_check': '80161f9f45'
         }
 
-    def authenticated(self):
+    def authenticate(self):
         session = requests.session()
-        session.post(
+        response = session.post(
             f'{self.base_url}/wp-admin/admin-ajax.php',
             data=self._create_data_login(),
         )
+        if 'AFLT' in response.text:
+            self.authenticated = True
+            self.session = session
+        return self.authenticated
