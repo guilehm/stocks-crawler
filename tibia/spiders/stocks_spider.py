@@ -97,13 +97,17 @@ class StockSpider(BaseSpider):
     def parse_fundamentalist_analysis_video(self, stock):
         response = self._get_response_fundamentalist_analysis(stock)
         return dict(
-            video=response.xpath('.//section[@class="analise-video"]//iframe/@src').get('').strip('//')
+            video=response.xpath(
+                './/section[@class="analise-video"]//iframe/@src'
+            ).get('').strip('//')
         )
 
     def parse_fundamentalist_analysis_chart(self, stock):
         response = self._get_response_fundamentalist_analysis(stock)
         return dict(
-            chart=response.xpath('//section/iframe[contains(@src, "s.tradingview.com/bovespa/")]/@src').get()
+            chart=response.xpath(
+                '//section/iframe[contains(@src, "s.tradingview.com/bovespa/")]/@src'
+            ).get()
         )
 
     def parse_fundamentalist_analysis_company_data(self, stock, save=False):
