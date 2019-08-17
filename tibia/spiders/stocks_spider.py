@@ -16,6 +16,7 @@ class BaseSpider:
         self.login = login
         self.password = password
         self.session = None
+        self.response = None
 
     def _create_data_login(self):
         return {
@@ -46,10 +47,13 @@ class BaseSpider:
         else:
             raise Exception('Could not authenticate')
 
-    def get_response(self, url):
+    def get_response(self, url, force_update=False):
         if not self.authenticated:
             self._authenticate()
+        if self.response and not force_update:
+            return self.response
         response = self.session.get(url)
+        self.response = response
         return Selector(text=response.text)
 
     def save_data(self, data, collection, many=False):
