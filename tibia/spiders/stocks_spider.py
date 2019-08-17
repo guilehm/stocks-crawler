@@ -58,8 +58,9 @@ class BaseSpider:
         self.response = Selector(text=response.text)
         return self.response
 
-    def save_data(self, data, collection, many=False):
+    def save_data(self, data, collection):
         collection = self.db[collection]
+        many = not isinstance(data, dict) and len(data) > 1
         if many:
             return collection.insert_many(data)
         return collection.insert_one(data)
