@@ -6,6 +6,7 @@
 * Mongodb
 * Pymongo
 * Scrapy
+* Xpath
 
 
 # Instalação
