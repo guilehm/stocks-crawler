@@ -13,7 +13,7 @@
 
 Clone este repositório
 
-    $ git clone git@github.com:Guilehm/tibia-crawler.git
+    $ git clone git@github.com:Guilehm/stocks-crawler.git
 
 Entre no diretório
 
