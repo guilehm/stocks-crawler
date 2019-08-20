@@ -4,7 +4,7 @@ from scrapy.selector import Selector
 
 BASE_URL = 'https://eduardocavalcanti.com'
 MONGO_URL = 'mongodb://localhost:27017/'
-DB_NAME = 'tibia'
+DB_NAME = 'stocks'
 
 
 class BaseSpider:
