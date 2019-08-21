@@ -17,7 +17,7 @@ Clone este repositório
 
 Entre no diretório
 
-    $ cd tibia-crawler
+    $ cd stocks-crawler
 
 Crie o ambiente virtual *(necessário Pipenv)*
 
