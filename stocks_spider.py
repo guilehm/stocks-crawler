@@ -158,6 +158,7 @@ class StockSpider(BaseSpider):
         output.update(self.parse_fundamentalist_analysis_video(stock, url=url))
         output.update(self.parse_fundamentalist_analysis_chart(stock, url=url))
         output.update(self.parse_fundamentalist_analysis_table(stock, url=url))
+        output.update({'code': stock})
         if save:
             print(f'\tsaving at database for {stock}')
             self.save_data(output, 'fundamentalistAnalysis')
