@@ -172,6 +172,7 @@ class StockSpider(BaseSpider):
             stocks = self.parse_stocks()
         for stock in stocks:
             self.extract_all_fundamentalist_data(stock=stock['code'], save=save, url=stock['url'])
+        print(f'Success extracting data for {len(stocks)} stocks')
 
 
 def convert_to_float(value):
