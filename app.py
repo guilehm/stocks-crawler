@@ -20,6 +20,13 @@ db = mongo.db
 stocks_collection = db.stocks
 stocks_analysis_collection = db.stocksAnalysis
 
+uri_data = MONGODB_URI.rsplit('/', 1)
+db_name = uri_data[-1]
+mongo_url = ''.join(uri_data[:-1])
+SPIDER = StockSpider(
+    CRAWLER_EMAIL, CRAWLER_PASSWORD, mongo_url=mongo_url, db_name=db_name,
+)
+
 
 def convert_id(document):
     document['_id'] = str(document['_id'])
@@ -43,13 +50,7 @@ def stocks_list():
                 'error': True,
                 'message': 'Credentials not set',
             })
-        uri_data = MONGODB_URI.rsplit('/', 1)
-        db_name = uri_data[-1]
-        mongo_url = ''.join(uri_data[:-1])
-        spider = StockSpider(
-            CRAWLER_EMAIL, CRAWLER_PASSWORD, mongo_url=mongo_url, db_name=db_name,
-        )
-        stocks = spider.parse_stocks(save=True)
+        stocks = SPIDER.parse_stocks(save=True)
     return jsonify([convert_id(stock) for stock in stocks])
 
 
