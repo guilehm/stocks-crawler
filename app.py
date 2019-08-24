@@ -24,8 +24,15 @@ def convert_id(document):
     return document
 
 
-@app.route('/stocks/', methods=['GET', 'POST'])
+@app.route('/')
 def index():
+    return jsonify({
+        'stocks': f'{request.url}stocks/',
+    })
+
+
+@app.route('/stocks/', methods=['GET', 'POST'])
+def stocks():
     if request.method != 'POST':
         stocks = [stock for stock in stocks_collection.find()]
     else:
