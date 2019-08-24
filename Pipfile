@@ -12,6 +12,8 @@ scrapy = "*"
 ipython = "*"
 requests = "*"
 click = "*"
+flask = "*"
+flask-pymongo = "*"
 
 [requires]
 python_version = "3.7"

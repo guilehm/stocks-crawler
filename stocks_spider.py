@@ -85,6 +85,7 @@ class StockSpider(BaseSpider):
         [stock.update(name=name) for stock, name in list(zip(stocks, names))]
         self.stocks = stocks
         if save:
+            self.db.stocks.drop()
             self.save_data(stocks, 'stocks')
         print('Success\n')
         return stocks
@@ -157,6 +158,7 @@ class StockSpider(BaseSpider):
         output.update(self.parse_fundamentalist_analysis_video(stock, url=url))
         output.update(self.parse_fundamentalist_analysis_chart(stock, url=url))
         output.update(self.parse_fundamentalist_analysis_table(stock, url=url))
+        output.update({'code': stock})
         if save:
             print(f'\tsaving at database for {stock}')
             self.save_data(output, 'fundamentalistAnalysis')
