@@ -24,11 +24,25 @@ def convert_id(document):
     return document
 
 
-@app.route('/')
+@app.route('/stocks/', methods=['GET', 'POST'])
 def index():
-    stocks = [convert_id(stock) for stock in stocks_collection.find()]
-    return jsonify(stocks)
+    if request.method != 'POST':
+        stocks = [stock for stock in stocks_collection.find()]
+    else:
+        if not CRAWLER_EMAIL or not CRAWLER_PASSWORD:
+            return jsonify({
+                'error': True,
+                'message': 'Credentials not set',
+            })
+        uri_data = MONGODB_URI.rsplit('/', 1)
+        db_name = uri_data[-1]
+        mongo_url = ''.join(uri_data[:-1])
+        spider = StockSpider(
+            CRAWLER_EMAIL, CRAWLER_PASSWORD, mongo_url=mongo_url, db_name=db_name,
+        )
+        stocks = spider.parse_stocks(save=True)
+    return jsonify([convert_id(stock) for stock in stocks])
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=DEBUG)
