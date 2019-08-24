@@ -59,9 +59,9 @@ def analysis_list():
     return jsonify([convert_id(a) for a in stocks_analysis_collection.find()])
 
 
-@app.route('/stocks/<string:code>/analysis')
-def analysis_detail(code):
-    code = code.upper()
+@app.route('/stocks/<string:stock_code>/analysis')
+def analysis_detail(stock_code):
+    code = stock_code.upper()
     analysis = stocks_analysis_collection.find_one({
         'company.Código de Negociação': code,
     })
@@ -73,9 +73,9 @@ def analysis_detail(code):
     return jsonify(convert_id(analysis))
 
 
-@app.route('/stocks/<string:code>/')
-def stocks_detail(code):
-    code = code.upper()
+@app.route('/stocks/<string:stock_code>/')
+def stocks_detail(stock_code):
+    code = stock_code.upper()
     stock = stocks_collection.find_one({'code': code})
     if not stock:
         return abort(404)
