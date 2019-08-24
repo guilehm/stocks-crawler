@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, abort
 from flask_pymongo import PyMongo
 from stocks_spider import StockSpider
 
@@ -49,6 +49,14 @@ def stocks():
         )
         stocks = spider.parse_stocks(save=True)
     return jsonify([convert_id(stock) for stock in stocks])
+
+
+@app.route('/stocks/<string:code>/')
+def stocks_detail(code):
+    stock = stocks_collection.find_one({'code': code})
+    if not stock:
+        return abort(404)
+    return jsonify(convert_id(stock))
 
 
 if __name__ == '__main__':
