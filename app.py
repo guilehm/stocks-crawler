@@ -53,13 +53,17 @@ def stocks_list():
     return jsonify([convert_id(stock) for stock in stocks])
 
 
+@app.route('/stocks/analysis/')
+def analysis_list():
+    return jsonify([convert_id(a) for a in stocks_analysis_collection.find()])
+
+
 @app.route('/stocks/<string:code>/')
 def stocks_detail(code):
     stock = stocks_collection.find_one({'code': code})
     if not stock:
         return abort(404)
     return jsonify(convert_id(stock))
-
 
 if __name__ == '__main__':
     app.run(debug=DEBUG)
