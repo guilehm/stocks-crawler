@@ -18,6 +18,7 @@ class BaseSpider:
         self.session = None
         self.response = None
         self.url = None
+        self.stocks = None
 
     def _create_data_login(self):
         return {
@@ -36,6 +37,7 @@ class BaseSpider:
         }
 
     def _authenticate(self):
+        print('Trying to authenticate...')
         session = requests.session()
         session.post(
             f'{self.base_url}/wp-admin/admin-ajax.php',
@@ -45,8 +47,10 @@ class BaseSpider:
         if 'AFLT' in response.text:
             self.authenticated = True
             self.session = session
+            print('Success!\n')
         else:
-            raise Exception('Could not authenticate')
+            print('Could not authenticate. Please check your credentials')
+            return
 
     def get_response(self, url, force_update=False):
         if not self.authenticated:
@@ -67,7 +71,10 @@ class BaseSpider:
 
 
 class StockSpider(BaseSpider):
-    def parse_stocks(self, url, save=False):
+    def parse_stocks(self, url=None, save=False):
+        print('Trying to get stocks data...')
+        if not url:
+            url = f'{self.base_url}/dashboard/'
         response = self.get_response(url)
         stocks = [extract_from_links(link, 'code') for link in response.xpath(
             '//h2[@class="entry-title"]/a'
@@ -76,8 +83,10 @@ class StockSpider(BaseSpider):
             '//article//div[@class="entry-content entry-summary"]//text()'
         ).getall() if name and name.strip()]
         [stock.update(name=name) for stock, name in list(zip(stocks, names))]
+        self.stocks = stocks
         if save:
             self.save_data(stocks, 'stocks')
+        print('Success\n')
         return stocks
 
     def _get_response_fundamentalist_analysis(self, stock, url=None):
@@ -141,6 +150,7 @@ class StockSpider(BaseSpider):
         return dict(fundamentalistAnalysis=data)
 
     def extract_all_fundamentalist_data(self, stock, save=False, url=None):
+        print('Trying to extract data for', stock)
         output = dict()
         output.update(self.parse_fundamentalist_analysis_company_data(stock, url=url))
         output.update(self.parse_fundamentalist_analysis_rate(stock, url=url))
