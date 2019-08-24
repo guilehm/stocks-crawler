@@ -5,7 +5,9 @@ from flask_pymongo import PyMongo
 from stocks_spider import StockSpider
 
 
-DEBUG = os.getenv('DEBUG', False)
+# A GoHorse made app
+
+DEBUG = os.getenv('DEBUG', True)
 MONGODB_URI = os.getenv('MONGODB_URI', 'mongodb://localhost:27017/stocksCrawler')
 CRAWLER_EMAIL = os.getenv('CRAWLER_EMAIL')
 CRAWLER_PASSWORD = os.getenv('CRAWLER_PASSWORD')
@@ -32,7 +34,7 @@ def index():
 
 
 @app.route('/stocks/', methods=['GET', 'POST'])
-def stocks():
+def stocks_list():
     if request.method != 'POST':
         stocks = [stock for stock in stocks_collection.find()]
     else:
