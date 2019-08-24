@@ -10,12 +10,17 @@ app.config['MONGO_URI'] = MONGODB_URI
 
 mongo = PyMongo(app)
 db = mongo.db
-stocks_collection = db.stocks_collection
+stocks_collection = db.fundamentalistAnalysis
+
+
+def convert_id(document):
+    document['_id'] = str(document['_id'])
+    return document
 
 
 @app.route('/')
 def index():
-    stocks = [stock for stock in stocks_collection.find()]
+    stocks = [convert_id(stock) for stock in stocks_collection.find()]
     return jsonify(stocks)
 
 
