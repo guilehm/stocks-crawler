@@ -85,6 +85,7 @@ class StockSpider(BaseSpider):
         [stock.update(name=name) for stock, name in list(zip(stocks, names))]
         self.stocks = stocks
         if save:
+            self.db.stocks.drop()
             self.save_data(stocks, 'stocks')
         print('Success\n')
         return stocks
