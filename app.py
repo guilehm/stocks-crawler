@@ -63,7 +63,7 @@ def analysis_list():
 def analysis_detail(stock_code):
     code = stock_code.upper()
     analysis = stocks_analysis_collection.find_one({
-        'company.Código de Negociação': code,
+        'code': code,
     })
     if not analysis:
         stock = stocks_collection.find_one({'code': code})
