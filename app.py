@@ -18,7 +18,7 @@ app.config['MONGO_URI'] = MONGODB_URI
 mongo = PyMongo(app)
 db = mongo.db
 stocks_collection = db.stocks
-stocks_analysis_collection = db.stocksAnalysis
+stocks_analysis_collection = db.fundamentalistAnalysis
 
 uri_data = MONGODB_URI.rsplit('/', 1)
 db_name = uri_data[-1]
