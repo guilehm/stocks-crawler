@@ -10,7 +10,7 @@ from stocks_spider import StockSpider
     help='Type your password',
     hide_input=True,
 )
-@click.option('--save/--no-save', default=True)
+@click.option('--save/--no-save', default=True, help='Save data at database')
 @click.option('--mongo-url', default='mongodb://localhost:27017/', help='Mongo endpoint ')
 @click.option('--db-name', default='stocks', help='Database name')
 def run(email, password, save, mongo_url, db_name):
