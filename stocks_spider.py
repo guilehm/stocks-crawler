@@ -152,11 +152,11 @@ class StockSpider(BaseSpider):
             self.save_data(output, 'fundamentalistAnalysis')
         return output
 
-    def extract_data_for_all_stocks(self):
+    def extract_data_for_all_stocks(self, save=True):
         stocks_collection = self.db.stocks
         stocks = [stock for stock in stocks_collection.find()]
         for stock in stocks:
-            self.extract_all_fundamentalist_data(stock=stock['code'], save=True, url=stock['url'])
+            self.extract_all_fundamentalist_data(stock=stock['code'], save=save, url=stock['url'])
 
 
 def convert_to_float(value):
