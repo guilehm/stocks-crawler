@@ -27,9 +27,13 @@ Ative o ambiente virtual
 
     $ pipenv shell
 
-Acesse o arquivo no modo interativo via ipython
+Execute o comando abaixo para obter ajuda
 
-    $ ipython -i stocks_spider.py
+    $ python main.py --help
+
+Inicie o crawler:
+
+    $ python main.py
 
 Crie uma instância de `StockSpider` com suas credenciais e acesse os métodos desejados
 
