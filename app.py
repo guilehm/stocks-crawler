@@ -33,6 +33,13 @@ def convert_id(document):
     return document
 
 
+def add_url(document):
+    url_root = request.url_root
+    code = document['url'].rsplit('/', 2)[-2]
+    document['analysisUrl'] = f'{url_root}stocks/{code}/analysis/'
+    return document
+
+
 @app.route('/')
 def index():
     return jsonify({
