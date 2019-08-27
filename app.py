@@ -58,7 +58,7 @@ def stocks_list():
                 'message': 'Credentials not set',
             })
         stocks = SPIDER.parse_stocks(save=True)
-    return jsonify([convert_id(stock) for stock in stocks])
+    return jsonify([add_url(convert_id(stock)) for stock in stocks])
 
 
 @app.route('/stocks/analysis/')
