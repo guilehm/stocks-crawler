@@ -35,6 +35,5 @@ Inicie o crawler:
 
     $ python main.py
 
-Crie uma instância de `StockSpider` com suas credenciais e acesse os métodos desejados
 
 OBS.: para obter as credenciais se cadastre aqui [link](https://eduardocavalcanti.com/cadastro/)
