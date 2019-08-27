@@ -66,7 +66,7 @@ def analysis_list():
     return jsonify([convert_id(a) for a in stocks_analysis_collection.find()])
 
 
-@app.route('/stocks/<string:stock_code>/analysis')
+@app.route('/stocks/<string:stock_code>/analysis/')
 def analysis_detail(stock_code):
     code = stock_code.upper()
     analysis = stocks_analysis_collection.find_one({
