@@ -33,6 +33,13 @@ def convert_id(document):
     return document
 
 
+def add_url(document):
+    url_root = request.url_root
+    code = document['url'].rsplit('/', 2)[-2]
+    document['analysisUrl'] = f'{url_root}stocks/{code}/analysis/'
+    return document
+
+
 @app.route('/')
 def index():
     return jsonify({
@@ -51,7 +58,7 @@ def stocks_list():
                 'message': 'Credentials not set',
             })
         stocks = SPIDER.parse_stocks(save=True)
-    return jsonify([convert_id(stock) for stock in stocks])
+    return jsonify([add_url(convert_id(stock)) for stock in stocks])
 
 
 @app.route('/stocks/analysis/')
@@ -59,7 +66,7 @@ def analysis_list():
     return jsonify([convert_id(a) for a in stocks_analysis_collection.find()])
 
 
-@app.route('/stocks/<string:stock_code>/analysis')
+@app.route('/stocks/<string:stock_code>/analysis/')
 def analysis_detail(stock_code):
     code = stock_code.upper()
     analysis = stocks_analysis_collection.find_one({
