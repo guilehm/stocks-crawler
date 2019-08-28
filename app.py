@@ -24,7 +24,7 @@ uri_data = MONGODB_URI.rsplit('/', 1)
 db_name = uri_data[-1]
 mongo_url = ''.join(uri_data[:-1])
 SPIDER = StockSpider(
-    CRAWLER_EMAIL, CRAWLER_PASSWORD, mongo_url=mongo_url, db_name=db_name,
+    CRAWLER_EMAIL, CRAWLER_PASSWORD, mongo_url=MONGODB_URI, db_name=db_name,
 )
 
 
