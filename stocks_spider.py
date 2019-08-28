@@ -8,8 +8,8 @@ DB_NAME = 'stocks'
 
 
 class BaseSpider:
-    def __init__(self, login, password, base_url=BASE_URL, mongo_url=MONGO_URL, db_name=DB_NAME):
-        self.mongo_client = MongoClient(mongo_url)
+    def __init__(self, login, password, base_url=BASE_URL, mongo_url=MONGO_URL, db_name=DB_NAME, retry_writes='true'):
+        self.mongo_client = MongoClient(mongo_url + f'?retryWrites={retry_writes}')
         self.db = self.mongo_client[db_name]
         self.base_url = base_url
         self.authenticated = False
