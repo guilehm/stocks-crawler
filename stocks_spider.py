@@ -9,6 +9,8 @@ DB_NAME = 'stocks'
 
 class BaseSpider:
     def __init__(self, login, password, base_url=BASE_URL, mongo_url=MONGO_URL, db_name=DB_NAME):
+        print('MONGO_URL', mongo_url)
+        print('DB_NAME', db_name)
         self.mongo_client = MongoClient(mongo_url)
         self.db = self.mongo_client[db_name]
         self.base_url = base_url
@@ -85,6 +87,8 @@ class StockSpider(BaseSpider):
         [stock.update(name=name) for stock, name in list(zip(stocks, names))]
         self.stocks = stocks
         if save:
+            print('db', self.db)
+            print('dir db', self.db)
             self.db.stocks.drop()
             self.save_data(stocks, 'stocks')
         print('Success\n')
