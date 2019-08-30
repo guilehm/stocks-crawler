@@ -70,7 +70,7 @@ def analysis_list():
     return jsonify([convert_id(a) for a in stocks_analysis_collection.find()])
 
 
-@app.route('/stocks/<string:stock_code>/analysis/')
+@app.route('/stocks/<string:stock_code>/analysis/', methods=['GET', 'POST'])
 def analysis_detail(stock_code):
     code = stock_code.upper()
     analysis = stocks_analysis_collection.find_one({
@@ -80,6 +80,8 @@ def analysis_detail(stock_code):
         stock = stocks_collection.find_one({'code': code})
         if not stock:
             return abort(404)
+    if request.method == 'POST':
+        stocks_analysis_collection.delete_one(analysis)
         analysis = SPIDER.extract_all_fundamentalist_data(code, save=True)
     return jsonify(convert_id(analysis))
 
