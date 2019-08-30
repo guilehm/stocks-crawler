@@ -188,17 +188,7 @@ def convert_to_float(value):
 
 def extract_from_company_data(row):
     data = [text.strip().strip(':') for text in row.xpath('.//text()').getall() if text.strip()]
-    output = dict()
-    key, value = None, None
-    for number, i in enumerate(data):
-        if number % 2 == 0:
-            key = i
-        else:
-            value = i
-        if value:
-            output.update({key: value})
-            value = None
-    return output
+    return dict(zip(data[::2], data[1::2]))
 
 
 def extract_from_links(node, name='name'):
