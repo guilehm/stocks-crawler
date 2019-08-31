@@ -187,7 +187,12 @@ def convert_to_float(value):
 
 
 def extract_from_company_data(row):
-    data = [text.strip().strip(':') for text in row.xpath('.//text()').getall() if text.strip()]
+    def strip_from_text_or_link(data):
+        link = data.xpath('.//a')
+        if link:
+            return link.attrib['href']
+        return data.xpath('.//text()').get('').strip().strip(':')
+    data = [strip_from_text_or_link(d) for d in row.xpath('./tbody/tr/td')]
     return dict(zip(data[::2], data[1::2]))
 
 
