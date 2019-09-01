@@ -13,7 +13,7 @@ CRAWLER_EMAIL = os.getenv('CRAWLER_EMAIL')
 CRAWLER_PASSWORD = os.getenv('CRAWLER_PASSWORD')
 
 app = Flask(__name__)
-app.config['MONGO_URI'] = MONGODB_URI
+app.config['MONGO_URI'] = f'{MONGODB_URI}?retryWrites=false'
 
 mongo = PyMongo(app)
 db = mongo.db
