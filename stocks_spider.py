@@ -1,3 +1,6 @@
+import logging
+import sys
+
 import requests
 from pymongo import MongoClient
 from scrapy.selector import Selector
@@ -5,6 +8,9 @@ from scrapy.selector import Selector
 BASE_URL = 'https://eduardocavalcanti.com'
 MONGO_URL = 'mongodb://localhost:27017/'
 DB_NAME = 'stocks'
+
+logging.basicConfig(stream=sys.stdout, level=logging.INFO)
+logging.Formatter('%(asctime)s [%(threadName)-12.12s] [%(levelname)-5.5s]  %(message)s')
 
 
 class BaseSpider:
@@ -37,7 +43,7 @@ class BaseSpider:
         }
 
     def _authenticate(self):
-        print('Trying to authenticate...')
+        logging.info('Trying to authenticate...')
         session = requests.session()
         session.post(
             f'{self.base_url}/wp-admin/admin-ajax.php',
@@ -47,9 +53,9 @@ class BaseSpider:
         if 'AFLT' in response.text:
             self.authenticated = True
             self.session = session
-            print('Success!\n')
+            logging.info('Success!')
         else:
-            print('Could not authenticate. Please check your credentials')
+            logging.error('Could not authenticate. Please check your credentials')
             return
 
     def get_response(self, url, force_update=False):
@@ -72,7 +78,7 @@ class BaseSpider:
 
 class StockSpider(BaseSpider):
     def parse_stocks(self, url=None, save=False):
-        print('Trying to get stocks data...')
+        logging.info('Trying to get stocks data...')
         if not url:
             url = f'{self.base_url}/dashboard/'
         response = self.get_response(url)
@@ -87,7 +93,7 @@ class StockSpider(BaseSpider):
         if save:
             self.db.stocks.drop()
             self.save_data(stocks, 'stocks')
-        print('Success\n')
+        logging.info('Success')
         return stocks
 
     def _get_response_fundamentalist_analysis(self, stock, url=None):
@@ -153,17 +159,18 @@ class StockSpider(BaseSpider):
         return dict(fundamentalistAnalysis=data)
 
     def extract_all_fundamentalist_data(self, stock, save=False, url=None):
-        print('Trying to extract data for', stock)
+        logging.info(f'Trying to extract data for {stock}')
         output = dict()
+        output.update({'code': stock})
         output.update(self.parse_fundamentalist_analysis_company_data(stock, url=url))
         output.update(self.parse_fundamentalist_analysis_rate(stock, url=url))
         output.update(self.parse_fundamentalist_analysis_video(stock, url=url))
         output.update(self.parse_fundamentalist_analysis_chart(stock, url=url))
         output.update(self.parse_fundamentalist_analysis_table(stock, url=url))
-        output.update({'code': stock})
         if save:
-            print(f'\tsaving at database for {stock}')
+            logging.info(f'saving at database for {stock}')
             self.save_data(output, 'fundamentalistAnalysis')
+        logging.info('173', output)
         return output
 
     def extract_data_for_all_stocks(self, save=True, from_db=False):
@@ -176,7 +183,7 @@ class StockSpider(BaseSpider):
             stocks = self.parse_stocks()
         for stock in stocks:
             self.extract_all_fundamentalist_data(stock=stock['code'], save=save, url=stock['url'])
-        print(f'Success extracting data for {len(stocks)} stocks')
+        logging.info(f'Success extracting data for {len(stocks)} stocks')
 
 
 def convert_to_float(value):
