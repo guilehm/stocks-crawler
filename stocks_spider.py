@@ -124,12 +124,14 @@ class StockSpider(BaseSpider):
 
     def parse_fundamentalist_analysis_company_data(self, stock, save=False, url=None):
         response = self._get_response_fundamentalist_analysis(stock, url)
+        logo = response.xpath('//main/div[@class="logo_empresa"]/img/@src').get()
         company, governance = response.xpath(
             './/table[@class="table table-responsive table-condensed infoDados"]'
         )
         data = dict(
+            logo=logo,
             company=extract_from_company_data(company),
-            governance=extract_from_company_data(governance)
+            governance=extract_from_company_data(governance),
         )
         if save:
             self.save_data(data, 'fundamentalistAnalysis')
