@@ -1,9 +1,8 @@
 import os
 
 from flask import Flask, jsonify, request, abort
-from flask_pymongo import PyMongo
-from stocks_spider import StockSpider
 
+from stocks_spider import StockSpider
 
 # A GoHorse made app
 
@@ -13,12 +12,6 @@ CRAWLER_EMAIL = os.getenv('CRAWLER_EMAIL')
 CRAWLER_PASSWORD = os.getenv('CRAWLER_PASSWORD')
 
 app = Flask(__name__)
-app.config['MONGO_URI'] = f'{MONGODB_URI}?retryWrites=false'
-
-mongo = PyMongo(app)
-db = mongo.db
-stocks_collection = db.stocks
-stocks_analysis_collection = db.fundamentalistAnalysis
 
 uri_data = MONGODB_URI.rsplit('/', 1)
 db_name = uri_data[-1]
@@ -30,6 +23,10 @@ SPIDER = StockSpider(
     db_name=db_name,
     retry_writes='false',
 )
+
+db = SPIDER.db
+stocks_collection = db.stocks
+stocks_analysis_collection = db.fundamentalistAnalysis
 
 
 def convert_id(document):
