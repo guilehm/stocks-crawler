@@ -64,7 +64,7 @@ Neste ponto o app deverá estar rodando em [http://localhost:5000](http://localh
 ```
 Error starting userland proxy: listen tcp 0.0.0.0:5000: bind: address already in use
 ```
-Pare a execução do seu mongo local com o seguinte comando:
+*Pare a execução do seu mongo local com o seguinte comando:*
 
     $ sudo systemctl stop mongodb
 
