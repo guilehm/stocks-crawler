@@ -36,6 +36,8 @@ Utilize algum editor para alterar suas credenciais*
 
     $ vim .env
     
+<small>*para obter as credenciais se cadastre [aqui](https://eduardocavalcanti.com/cadastro/)*</small>
+    
 ### Instalação com Docker
 *(se quiser rodar sem Docker, vá para a próxima etapa)*
 
@@ -47,6 +49,15 @@ Após ter concluído as etapas anteriores e estar com o serviço do Docker rodan
     $ docker-compose up
     
 Neste ponto o app deverá estar rodando em [http://localhost:5000](http://localhost:5000) e o Mongodb na porta `27017`
+
+*Caso ocorra o seguinte erro:*
+```
+Error starting userland proxy: listen tcp 0.0.0.0:5000: bind: address already in use
+```
+Pare a execução do seu mongo local com o seguinte comando:
+
+    $ sudo systemctl stop mongodb
+
 
 ### Execução via Flask local 
 
@@ -72,5 +83,3 @@ Inicie o crawler:
 
     $ python main.py
     
-
-OBS.: para obter as credenciais se cadastre aqui [link](https://eduardocavalcanti.com/cadastro/)
