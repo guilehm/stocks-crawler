@@ -14,7 +14,12 @@ Criei a API para poder utilizar estas as informaçoes em [meu BOT](https://githu
 ![Screenshot from 2019-09-01 22-24-59](https://user-images.githubusercontent.com/33688752/64085159-5c637d80-cd07-11e9-9c3e-c85809798ed7.png)
 
 
+###  Endpoints base
+Estes endpoints aceitam `GET` e `POST`.
 
+Com `GET` as informações serão recuperadas do Mongodb, com `POST` o crawler irá extrair em tempo real e salvar no Mongo.
+* https://gui-stocks.herokuapp.com/stocks/
+* [https://gui-stocks.herokuapp.com/stocks/mglu/analysis/](https://gui-stocks.herokuapp.com/stocks/mglu/analysis/)
 
 # Visão Geral
 
