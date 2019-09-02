@@ -64,15 +64,7 @@ Após ter concluído as etapas anteriores e estar com o serviço do Docker rodan
 
     $ docker-compose up
     
-Neste ponto o app deverá estar rodando em [http://localhost:5000](http://localhost:5000) e o Mongodb na porta `27017`
-
-*Caso ocorra o seguinte erro:*
-```
-Error starting userland proxy: listen tcp 0.0.0.0:5000: bind: address already in use
-```
-*Pare a execução do seu mongo local com o seguinte comando:*
-
-    $ sudo systemctl stop mongodb
+Finalizamos, neste ponto o app deverá estar rodando em [http://localhost:5000](http://localhost:5000) e o Mongodb na porta `27017`. Siga os próximos passos apenas se não desejar executar o app via Docker.
 
 
 ### Execução via Flask local 
@@ -99,3 +91,16 @@ Inicie o crawler:
 
     $ python main.py
     
+    
+## Resolução de problemas
+*Caso ocorra o seguinte erro:*
+```
+Error starting userland proxy: listen tcp 0.0.0.0:5000: bind: address already in use
+```
+*Pare a execução do seu mongo local com o seguinte comando:*
+
+    $ sudo systemctl stop mongodb
+
+Faça o build novamente
+
+    $ docker-compose up --build
