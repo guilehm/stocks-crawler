@@ -94,4 +94,4 @@ def stocks_detail(stock_code):
 
 
 if __name__ == '__main__':
-    app.run(debug=DEBUG)
+    app.run(host='0.0.0.0', debug=DEBUG)

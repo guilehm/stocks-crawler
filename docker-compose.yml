@@ -1,0 +1,19 @@
+version: '3.3'
+networks:
+  default:
+
+services:
+  web:
+    build: .
+    image: "stocks-crawler"
+    ports:
+      - "5000:5000"
+    env_file:
+       - .env
+    depends_on:
+      - mongo
+
+  mongo:
+    image: "mongo:3.4-jessie"
+    ports:
+      - "27017:27017"
