@@ -51,7 +51,8 @@ Utilize algum editor para alterar suas credenciais*
 
     $ vim .env
     
-*<small>*para obter as credenciais se cadastre [aqui](https://eduardocavalcanti.com/cadastro/)*</small>
+*<small>*para obter as credenciais se cadastre [aqui](https://eduardocavalcanti.com/cadastro/).
+    faça o cadastro com e-mail e senha, <strong>não</strong> utilize o login do Facebook.*</small>
     
 ### Instalação com Docker
 *(se quiser rodar sem Docker, vá para a próxima etapa)*
