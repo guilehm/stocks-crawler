@@ -51,7 +51,7 @@ Utilize algum editor para alterar suas credenciais*
 
     $ vim .env
     
-<small>*para obter as credenciais se cadastre [aqui](https://eduardocavalcanti.com/cadastro/)*</small>
+*<small>*para obter as credenciais se cadastre [aqui](https://eduardocavalcanti.com/cadastro/)*</small>
     
 ### Instalação com Docker
 *(se quiser rodar sem Docker, vá para a próxima etapa)*
