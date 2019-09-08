@@ -1,9 +1,11 @@
+import logging
 import os
+import sys
 
 from flask import Flask, jsonify, request, abort
 
-from stocks_spider import StockSpider
 from google_sheets.crawler import SheetCrawler
+from stocks_spider import StockSpider
 
 # A GoHorse made app
 
@@ -12,6 +14,7 @@ MONGODB_URI = os.getenv('MONGODB_URI', 'mongodb://localhost:27017/stocksCrawler'
 CRAWLER_EMAIL = os.getenv('CRAWLER_EMAIL')
 CRAWLER_PASSWORD = os.getenv('CRAWLER_PASSWORD')
 
+logging.basicConfig(stream=sys.stdout, level=logging.INFO)
 app = Flask(__name__)
 
 uri_data = MONGODB_URI.rsplit('/', 1)
@@ -71,6 +74,21 @@ def stocks_list():
             })
         stocks = SPIDER.parse_stocks(save=True)
     return jsonify([add_url(convert_id(stock)) for stock in stocks])
+
+
+@app.route('/stocks/sheets/', methods=['GET', 'POST'])
+def stocks_sheet_list():
+    if not SHEET_SPIDER.authenticated:
+        return jsonify({
+            'error': True,
+            'message': 'Could not authenticate to Sheet Spider',
+        })
+    if request.method != 'POST':
+        stocks = SHEET_SPIDER.get_stock_data(save=False, as_dict=True)
+    else:
+        logging.info('Fetching data from Google Sheet')
+        stocks = SHEET_SPIDER.get_stock_data(save=True, as_dict=True, force_update=True)
+    return jsonify([convert_id(stock) for stock in stocks])
 
 
 @app.route('/stocks/analysis/')
