@@ -43,7 +43,7 @@ class SheetCrawler:
             except RequestException:
                 message = 'Token Pickle file could not be downloaded.'
                 logging.error(message)
-                raise Exception(message)
+                raise
             token_content = response.content
             creds = pickle.loads(token_content)
 
