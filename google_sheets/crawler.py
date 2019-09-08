@@ -79,7 +79,7 @@ class SheetCrawler:
         self.values = self.result.get('values', [])
         return self.values
 
-    def get_stock_data(self, save=False):
+    def get_stock_data(self, save=False, as_dict=False):
         data = self.values
         if not data:
             data = self.get_values()
@@ -89,5 +89,7 @@ class SheetCrawler:
             *[r.strip() for r in row], datetime.now().isoformat()
         ) for row in data[1:]]
         if save:
-            self.save_data([stock._asdict() for stock in self.stocks], 'stocksData')
+            self.save_data([stock._asdict() for stock in self.stocks], 'stocksSheet')
+        if as_dict:
+            return [stock._asdict() for stock in self.stocks]
         return self.stocks
