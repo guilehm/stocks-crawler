@@ -1,7 +1,10 @@
+import logging
 import os
+import sys
 
 from flask import Flask, jsonify, request, abort
 
+from google_sheets.crawler import SheetCrawler
 from stocks_spider import StockSpider
 
 # A GoHorse made app
@@ -11,6 +14,7 @@ MONGODB_URI = os.getenv('MONGODB_URI', 'mongodb://localhost:27017/stocksCrawler'
 CRAWLER_EMAIL = os.getenv('CRAWLER_EMAIL')
 CRAWLER_PASSWORD = os.getenv('CRAWLER_PASSWORD')
 
+logging.basicConfig(stream=sys.stdout, level=logging.INFO)
 app = Flask(__name__)
 
 uri_data = MONGODB_URI.rsplit('/', 1)
@@ -28,9 +32,19 @@ db = SPIDER.db
 stocks_collection = db.stocks
 stocks_analysis_collection = db.fundamentalistAnalysis
 
+stocks_sheet_collection = db.stocksSheet
+
+SHEET_SPIDER = SheetCrawler(db=db)
+
+try:
+    SHEET_SPIDER._authenticate()
+except Exception as e:
+    logging.error(e)
+
 
 def convert_id(document):
-    document['_id'] = str(document['_id'])
+    if document.get('_id'):
+        document['_id'] = str(document['_id'])
     return document
 
 
@@ -60,6 +74,38 @@ def stocks_list():
             })
         stocks = SPIDER.parse_stocks(save=True)
     return jsonify([add_url(convert_id(stock)) for stock in stocks])
+
+
+@app.route('/stocks/sheets/', methods=['GET', 'POST'])
+def stocks_sheet_list():
+    if not SHEET_SPIDER.authenticated:
+        return jsonify({
+            'error': True,
+            'message': 'Could not authenticate to Sheet Spider',
+        })
+    if request.method != 'POST':
+        stocks = SHEET_SPIDER.get_stock_data(save=False, as_dict=True)
+    else:
+        logging.info('Fetching data from Google Sheet')
+        stocks = SHEET_SPIDER.get_stock_data(save=True, as_dict=True, force_update=True)
+    return jsonify([convert_id(stock) for stock in stocks])
+
+
+@app.route('/stocks/sheets/<string:stock_code>/', methods=['GET', 'POST'])
+def stocks_sheet_detail(stock_code):
+    code = stock_code.upper()
+    if request.method != 'POST':
+        stock = stocks_sheet_collection.find_one(
+            {'codigo': code}
+        ).sort({'data': -1})
+    else:
+        SHEET_SPIDER.get_stock_data(save=True, as_dict=True, force_update=True)
+        stock = stocks_sheet_collection.find_one(
+            {'codigo': code}
+        ).sort({"data": -1})
+    if not stock:
+        return abort(404)
+    return jsonify(convert_id(stock))
 
 
 @app.route('/stocks/analysis/')
