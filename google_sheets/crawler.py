@@ -2,6 +2,7 @@ import logging
 import os
 import pickle
 import sys
+from datetime import datetime
 
 import requests
 from google.auth.transport.requests import Request
@@ -19,7 +20,7 @@ logging.basicConfig(stream=sys.stdout, level=logging.INFO)
 
 
 class SheetCrawler:
-    def __init__(self, sheet_id=SPREADSHEET_ID, range_name=RANGE_NAME, scopes=SCOPES):
+    def __init__(self, sheet_id=SPREADSHEET_ID, range_name=RANGE_NAME, scopes=SCOPES, db=None):
         self.sheet_id = sheet_id
         self.range_name = range_name
         self.scopes = scopes
@@ -29,6 +30,7 @@ class SheetCrawler:
         self.result = None
         self.values = None
         self.stocks = None
+        self.db = db
 
     def _authenticate(self):
         if not TOKEN_PICKLE_PATH:
@@ -55,6 +57,16 @@ class SheetCrawler:
         self.authenticated = True
         return self.authenticated
 
+    def save_data(self, data, collection):
+        if not self.db:
+            logging.error('Could not save data. Please choose a database')
+            return
+        collection = self.db[collection]
+        many = not isinstance(data, dict) and len(data) > 1
+        if many:
+            return collection.insert_many(data)
+        return collection.insert_one(data)
+
     def get_values(self):
         if not self.authenticated:
             self._authenticate()
@@ -67,12 +79,15 @@ class SheetCrawler:
         self.values = self.result.get('values', [])
         return self.values
 
-    def get_stock_data(self):
+    def get_stock_data(self, save=False):
         data = None
         if not self.values:
             data = self.get_values()
         if not data:
             raise Exception('No data found')
-
-        self.stocks = [Stock(*row) for row in data]
+        self.stocks = [Stock(
+            *row, datetime.now().isoformat()
+        ) for row in data[1:]]
+        if save:
+            self.save_data([stock._asdict() for stock in self.stocks], 'stocksData')
         return self.stocks
