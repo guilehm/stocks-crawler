@@ -14,7 +14,8 @@ headers = [
     'preco_fechamento_dia_anterior',
     'preco_baixa_52_semanas',
     'percentual_relacao_baixa_52_semanas',
-    'valor_de_mercado'
+    'valor_de_mercado',
+    'data',
 ]
 
 Stock = namedtuple('Stock', [*headers])
