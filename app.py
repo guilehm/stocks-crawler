@@ -2,6 +2,7 @@ import logging
 import os
 import sys
 
+import pymongo
 from flask import Flask, jsonify, request, abort
 
 from google_sheets.crawler import SheetCrawler
@@ -94,15 +95,12 @@ def stocks_sheet_list():
 @app.route('/stocks/sheets/<string:stock_code>/', methods=['GET', 'POST'])
 def stocks_sheet_detail(stock_code):
     code = stock_code.upper()
-    if request.method != 'POST':
-        stock = stocks_sheet_collection.find_one(
-            {'codigo': code}
-        ).sort({'data': -1})
-    else:
+    if request.method == 'POST':
         SHEET_SPIDER.get_stock_data(save=True, as_dict=True, force_update=True)
-        stock = stocks_sheet_collection.find_one(
-            {'codigo': code}
-        ).sort({"data": -1})
+    stock = stocks_sheet_collection.find_one(
+        {'codigo': code},
+        sort=[('data', pymongo.DESCENDING)]
+    )
     if not stock:
         return abort(404)
     return jsonify(convert_id(stock))
