@@ -80,13 +80,13 @@ class SheetCrawler:
         return self.values
 
     def get_stock_data(self, save=False):
-        data = None
-        if not self.values:
+        data = self.values
+        if not data:
             data = self.get_values()
         if not data:
             raise Exception('No data found')
         self.stocks = [Stock(
-            *row, datetime.now().isoformat()
+            *[r.strip() for r in row], datetime.now().isoformat()
         ) for row in data[1:]]
         if save:
             self.save_data([stock._asdict() for stock in self.stocks], 'stocksData')
