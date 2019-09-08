@@ -91,6 +91,23 @@ def stocks_sheet_list():
     return jsonify([convert_id(stock) for stock in stocks])
 
 
+@app.route('/stocks/sheets/<string:stock_code>/', methods=['GET', 'POST'])
+def stocks_sheet_detail(stock_code):
+    code = stock_code.upper()
+    if request.method != 'POST':
+        stock = stocks_sheet_collection.find_one(
+            {'codigo': code}
+        ).sort({'data': -1})
+    else:
+        SHEET_SPIDER.get_stock_data(save=True, as_dict=True, force_update=True)
+        stock = stocks_sheet_collection.find_one(
+            {'codigo': code}
+        ).sort({"data": -1})
+    if not stock:
+        return abort(404)
+    return jsonify(convert_id(stock))
+
+
 @app.route('/stocks/analysis/')
 def analysis_list():
     return jsonify([convert_id(a) for a in stocks_analysis_collection.find()])
