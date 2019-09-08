@@ -3,6 +3,7 @@ import os
 from flask import Flask, jsonify, request, abort
 
 from stocks_spider import StockSpider
+from google_sheets.crawler import SheetCrawler
 
 # A GoHorse made app
 
@@ -27,6 +28,8 @@ SPIDER = StockSpider(
 db = SPIDER.db
 stocks_collection = db.stocks
 stocks_analysis_collection = db.fundamentalistAnalysis
+
+SHEET_SPIDER = SheetCrawler(db=db)
 
 
 def convert_id(document):
