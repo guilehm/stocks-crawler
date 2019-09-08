@@ -29,11 +29,19 @@ db = SPIDER.db
 stocks_collection = db.stocks
 stocks_analysis_collection = db.fundamentalistAnalysis
 
+stocks_sheet_collection = db.stocksSheet
+
 SHEET_SPIDER = SheetCrawler(db=db)
+
+try:
+    SHEET_SPIDER._authenticate()
+except Exception as e:
+    logging.error(e)
 
 
 def convert_id(document):
-    document['_id'] = str(document['_id'])
+    if document.get('_id'):
+        document['_id'] = str(document['_id'])
     return document
 
 
