@@ -2,7 +2,7 @@ import logging
 import os
 import pickle
 import sys
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import requests
 from google.auth.transport.requests import Request
@@ -87,8 +87,9 @@ class SheetCrawler:
             data = self.get_values()
         if not data:
             raise Exception('No data found')
+        time = datetime.utcnow() - timedelta(hours=3)
         self.stocks = [Stock(
-            *[r.strip() for r in row], datetime.now().isoformat()
+            *[r.strip() for r in row], time.isoformat()
         ) for row in data[1:]]
         if save:
             self.save_data([stock._asdict() for stock in self.stocks], 'stocksSheet')
