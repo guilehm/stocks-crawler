@@ -79,8 +79,10 @@ class SheetCrawler:
         self.values = self.result.get('values', [])
         return self.values
 
-    def get_stock_data(self, save=False, as_dict=False):
+    def get_stock_data(self, save=False, as_dict=False, force_update=False):
         data = self.values
+        if force_update:
+            data = None
         if not data:
             data = self.get_values()
         if not data:
