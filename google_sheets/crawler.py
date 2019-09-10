@@ -3,13 +3,15 @@ import os
 import pickle
 import sys
 from datetime import datetime, timedelta
+from decimal import Decimal
 
 import requests
+from bson.decimal128 import Decimal128
 from google.auth.transport.requests import Request
 from googleapiclient.discovery import build
 from requests.exceptions import RequestException
 
-from google_sheets.models import Stock
+from google_sheets.models import Stock, format_values, headers_data
 
 SCOPES = ('https://www.googleapis.com/auth/spreadsheets.readonly',)
 SPREADSHEET_ID = os.getenv('SPREADSHEET_ID')
@@ -57,15 +59,26 @@ class SheetCrawler:
         self.authenticated = True
         return self.authenticated
 
-    def save_data(self, data, collection):
+    def save_data(self, data, collection, has_decimals=False):
+        def convert_decimal(doc):
+            for key, value in doc.items():
+                if type(value) == Decimal:
+                    doc[key] = Decimal128(value)
+            return doc
+
         if not self.db:
             logging.error('Could not save data. Please choose a database')
             return
         collection = self.db[collection]
         many = not isinstance(data, dict) and len(data) > 1
+
         if many:
-            return collection.insert_many(data)
-        return collection.insert_one(data)
+            if not has_decimals:
+                return collection.insert_many(data)
+            return collection.insert_many([convert_decimal(d) for d in data])
+        if not has_decimals:
+            return collection.insert_one(data)
+        return collection.insert_one(convert_decimal(data))
 
     def get_values(self):
         if not self.authenticated:
@@ -89,10 +102,14 @@ class SheetCrawler:
             raise Exception('No data found')
         time = datetime.utcnow() - timedelta(hours=3)
         self.stocks = [Stock(
-            *[r.strip() for r in row], time.isoformat()
+            *[format_values(d) for d in list(zip(headers_data.values(), row))], time.isoformat()
         ) for row in data[1:]]
         if save:
-            self.save_data([stock._asdict() for stock in self.stocks], 'stocksSheet')
+            self.save_data(
+                [stock._asdict() for stock in self.stocks],
+                'stocksSheet',
+                has_decimals=True
+            )
         if as_dict:
             return [stock._asdict() for stock in self.stocks]
         return self.stocks
