@@ -43,6 +43,15 @@ except Exception as e:
     logging.error(e)
 
 
+def convert_decimal(document):
+    for key, value in document.items():
+        if type(value) == Decimal:
+            document[key] = float(value)
+        elif type(value) == Decimal128:
+            document[key] = float(str(value))
+    return document
+
+
 def convert_id(document):
     if document.get('_id'):
         document['_id'] = str(document['_id'])
