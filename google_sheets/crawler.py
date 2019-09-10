@@ -59,15 +59,26 @@ class SheetCrawler:
         self.authenticated = True
         return self.authenticated
 
-    def save_data(self, data, collection):
+    def save_data(self, data, collection, has_decimals=False):
+        def convert_decimal(doc):
+            for key, value in doc.items():
+                if type(value) == Decimal:
+                    doc[key] = Decimal128(value)
+            return doc
+
         if not self.db:
             logging.error('Could not save data. Please choose a database')
             return
         collection = self.db[collection]
         many = not isinstance(data, dict) and len(data) > 1
+
         if many:
-            return collection.insert_many(data)
-        return collection.insert_one(data)
+            if not has_decimals:
+                return collection.insert_many(data)
+            return collection.insert_many([convert_decimal(d) for d in data])
+        if not has_decimals:
+            return collection.insert_one(data)
+        return collection.insert_one(convert_decimal(data))
 
     def get_values(self):
         if not self.authenticated:
