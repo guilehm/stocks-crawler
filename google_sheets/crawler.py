@@ -3,13 +3,15 @@ import os
 import pickle
 import sys
 from datetime import datetime, timedelta
+from decimal import Decimal
 
 import requests
+from bson.decimal128 import Decimal128
 from google.auth.transport.requests import Request
 from googleapiclient.discovery import build
 from requests.exceptions import RequestException
 
-from google_sheets.models import Stock
+from google_sheets.models import Stock, format_values, headers_data
 
 SCOPES = ('https://www.googleapis.com/auth/spreadsheets.readonly',)
 SPREADSHEET_ID = os.getenv('SPREADSHEET_ID')
