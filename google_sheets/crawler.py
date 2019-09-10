@@ -89,10 +89,14 @@ class SheetCrawler:
             raise Exception('No data found')
         time = datetime.utcnow() - timedelta(hours=3)
         self.stocks = [Stock(
-            *[r.strip() for r in row], time.isoformat()
+            *[format_values(d) for d in list(zip(headers_data.values(), row))], time.isoformat()
         ) for row in data[1:]]
         if save:
-            self.save_data([stock._asdict() for stock in self.stocks], 'stocksSheet')
+            self.save_data(
+                [stock._asdict() for stock in self.stocks],
+                'stocksSheet',
+                has_decimals=True
+            )
         if as_dict:
             return [stock._asdict() for stock in self.stocks]
         return self.stocks
