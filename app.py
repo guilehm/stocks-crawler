@@ -1,13 +1,13 @@
 import logging
 import os
 import sys
-
+from decimal import Decimal
 import pymongo
 from flask import Flask, jsonify, request, abort
 
 from google_sheets.crawler import SheetCrawler
 from stocks_spider import StockSpider
-
+from bson.decimal128 import Decimal128
 # A GoHorse made app
 
 DEBUG = os.getenv('DEBUG', True)
@@ -98,7 +98,7 @@ def stocks_sheet_list():
     else:
         logging.info('Fetching data from Google Sheet')
         stocks = SHEET_SPIDER.get_stock_data(save=True, as_dict=True, force_update=True)
-    return jsonify([convert_id(stock) for stock in stocks])
+    return jsonify([convert_decimal(convert_id(stock)) for stock in stocks])
 
 
 @app.route('/stocks/sheets/<string:stock_code>/', methods=['GET', 'POST'])
@@ -112,7 +112,7 @@ def stocks_sheet_detail(stock_code):
     )
     if not stock:
         return abort(404)
-    return jsonify(convert_id(stock))
+    return jsonify(convert_decimal(convert_id(stock)))
 
 
 @app.route('/stocks/analysis/')
