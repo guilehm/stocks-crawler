@@ -26,7 +26,7 @@ headers_data = dict(
 Stock = namedtuple('Stock', [*headers_data.keys()])
 
 
-def format_values(data):
+def format_value(data):
     method, value = data[0], data[1]
     value = value.replace('R$ ', '').replace('.', '').replace(',', '.').replace(' ', '')
 

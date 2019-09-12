@@ -11,7 +11,7 @@ from google.auth.transport.requests import Request
 from googleapiclient.discovery import build
 from requests.exceptions import RequestException
 
-from google_sheets.models import Stock, format_values, headers_data
+from google_sheets.models import Stock, format_value, headers_data
 
 SCOPES = ('https://www.googleapis.com/auth/spreadsheets.readonly',)
 SPREADSHEET_ID = os.getenv('SPREADSHEET_ID')
@@ -102,7 +102,7 @@ class SheetCrawler:
             raise Exception('No data found')
         time = datetime.utcnow() - timedelta(hours=3)
         self.stocks = [Stock(
-            *[format_values(d) for d in list(zip(headers_data.values(), row))], time.isoformat()
+            *[format_value(d) for d in list(zip(headers_data.values(), row))], time.isoformat()
         ) for row in data[1:]]
         if save:
             self.save_data(
