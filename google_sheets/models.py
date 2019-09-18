@@ -17,7 +17,7 @@ def format_value(method, value):
 
 
 headers_info = dict(
-    codigo=lambda x: format_value(str, x),
+    codigo=str,
     preco_tempo_real=lambda x: format_value(Decimal, x),
     preco_inicio_pregao=lambda x: format_value(Decimal, x),
     preco_alta_dia_atual=lambda x: format_value(Decimal, x),
