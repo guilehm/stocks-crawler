@@ -101,10 +101,10 @@ class SheetCrawler:
         if not data:
             raise Exception('No data found')
         time = datetime.utcnow() - timedelta(hours=3)
-        formatted_values = [[format_value(method, value) for method, value in zip(
-            headers_data.values(), row,
-        )] for row in data][1:]
-        self.stocks = [Stock(*values, time.isoformat()) for values in formatted_values]
+        formatted_values = ((format_value(method, value) for method, value in zip(
+            headers_info.values(), row,
+        )) for row in data)
+        self.stocks = [Stock(*values, time.isoformat()) for values in list(formatted_values)[1:]]
         if save:
             self.save_data(
                 [stock._asdict() for stock in self.stocks],
