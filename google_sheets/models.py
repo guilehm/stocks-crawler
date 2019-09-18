@@ -31,7 +31,7 @@ headers_info = dict(
     preco_baixa_52_semanas=lambda x: format_value(Decimal, x),
     percentual_relacao_baixa_52_semanas=lambda x: format_value(float, x),
     valor_de_mercado=lambda x: format_value(Decimal, x),
-    data=lambda x: format_value(str, x),
+    data=None,
 )
 
 Stock = namedtuple('Stock', headers_info.keys())
