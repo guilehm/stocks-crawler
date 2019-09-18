@@ -16,7 +16,7 @@ def format_value(method, value):
         return value
 
 
-headers_data = dict(
+headers_info = dict(
     codigo=lambda x: format_value(str, x),
     preco_tempo_real=lambda x: format_value(Decimal, x),
     preco_inicio_pregao=lambda x: format_value(Decimal, x),
@@ -34,4 +34,4 @@ headers_data = dict(
     data=lambda x: format_value(str, x),
 )
 
-Stock = namedtuple('Stock', headers_data.keys())
+Stock = namedtuple('Stock', headers_info.keys())
