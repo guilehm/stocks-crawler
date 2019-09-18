@@ -7,10 +7,10 @@ logging.basicConfig(stream=sys.stdout, level=logging.INFO)
 
 
 def format_value(method, value):
-    value = value.replace('R$ ', '').replace('.', '').replace(',', '.').replace(' ', '')
+    new_value = value.replace('R$ ', '').replace(' ', '').replace('.', '').replace(',', '.')
 
     try:
-        return method(value)
+        return method(new_value)
     except (DecimalException, ValueError):
         logging.exception(f'Could not convert value {value} to {method}', exc_info=True)
         return value
