@@ -4,6 +4,7 @@ import pickle
 import sys
 from datetime import datetime, timedelta
 from decimal import Decimal
+from itertools import islice
 
 import requests
 from bson.decimal128 import Decimal128
@@ -104,7 +105,7 @@ class SheetCrawler:
         formatted_values = ((format_value(method, value) for method, value in zip(
             headers_info.values(), row,
         )) for row in data)
-        self.stocks = [Stock(*values, time.isoformat()) for values in list(formatted_values)[1:]]
+        self.stocks = [Stock(*values, time.isoformat()) for values in islice(formatted_values, 1, None)]
         if save:
             self.save_data(
                 [stock._asdict() for stock in self.stocks],
