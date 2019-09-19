@@ -4,6 +4,7 @@ import pickle
 import sys
 from datetime import datetime, timedelta
 from decimal import Decimal
+from itertools import islice
 
 import requests
 from bson.decimal128 import Decimal128
@@ -11,7 +12,7 @@ from google.auth.transport.requests import Request
 from googleapiclient.discovery import build
 from requests.exceptions import RequestException
 
-from google_sheets.models import Stock, format_values, headers_data
+from google_sheets.models import Stock, format_value, headers_info
 
 SCOPES = ('https://www.googleapis.com/auth/spreadsheets.readonly',)
 SPREADSHEET_ID = os.getenv('SPREADSHEET_ID')
@@ -101,9 +102,10 @@ class SheetCrawler:
         if not data:
             raise Exception('No data found')
         time = datetime.utcnow() - timedelta(hours=3)
-        self.stocks = [Stock(
-            *[format_values(d) for d in list(zip(headers_data.values(), row))], time.isoformat()
-        ) for row in data[1:]]
+        formatted_values = ((format_value(method, value) for method, value in zip(
+            headers_info.values(), row,
+        )) for row in data)
+        self.stocks = [Stock(*values, time.isoformat()) for values in islice(formatted_values, 1, None)]
         if save:
             self.save_data(
                 [stock._asdict() for stock in self.stocks],

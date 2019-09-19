@@ -5,33 +5,33 @@ from decimal import Decimal, DecimalException
 
 logging.basicConfig(stream=sys.stdout, level=logging.INFO)
 
-headers_data = dict(
-    codigo=str,
-    preco_tempo_real=Decimal,
-    preco_inicio_pregao=Decimal,
-    preco_alta_dia_atual=Decimal,
-    preco_baixa_dia_atual=Decimal,
-    volume_negociacoes_dia_atual=int,
-    volume_medio_diario_negociacoes=int,
-    numero_acoes_em_circulacao=int,
-    alteracao_preco_desde_pregao_anterior=Decimal,
-    variacao_percentual_preco_pregao_anterior=Decimal,
-    preco_fechamento_dia_anterior=Decimal,
-    preco_baixa_52_semanas=Decimal,
-    percentual_relacao_baixa_52_semanas=float,
-    valor_de_mercado=Decimal,
-    data=str,
-)
 
-Stock = namedtuple('Stock', [*headers_data.keys()])
-
-
-def format_values(data):
-    method, value = data[0], data[1]
-    value = value.replace('R$ ', '').replace('.', '').replace(',', '.').replace(' ', '')
+def format_value(method, value):
+    new_value = value.replace('R$ ', '').replace(' ', '').replace('.', '').replace(',', '.')
 
     try:
-        return method(value)
+        return method(new_value)
     except (DecimalException, ValueError):
-        logging.exception(f'Could not convert value {data[1]} to {data[0]}', exc_info=True)
-        return data[1]
+        logging.exception(f'Could not convert value {value} to {method}', exc_info=True)
+        return value
+
+
+headers_info = dict(
+    codigo=str,
+    preco_tempo_real=lambda x: format_value(Decimal, x),
+    preco_inicio_pregao=lambda x: format_value(Decimal, x),
+    preco_alta_dia_atual=lambda x: format_value(Decimal, x),
+    preco_baixa_dia_atual=lambda x: format_value(Decimal, x),
+    volume_negociacoes_dia_atual=lambda x: format_value(int, x),
+    volume_medio_diario_negociacoes=lambda x: format_value(int, x),
+    numero_acoes_em_circulacao=lambda x: format_value(int, x),
+    alteracao_preco_desde_pregao_anterior=lambda x: format_value(Decimal, x),
+    variacao_percentual_preco_pregao_anterior=lambda x: format_value(Decimal, x),
+    preco_fechamento_dia_anterior=lambda x: format_value(Decimal, x),
+    preco_baixa_52_semanas=lambda x: format_value(Decimal, x),
+    percentual_relacao_baixa_52_semanas=lambda x: format_value(float, x),
+    valor_de_mercado=lambda x: format_value(Decimal, x),
+    data=None,
+)
+
+Stock = namedtuple('Stock', headers_info.keys())
