@@ -18,6 +18,7 @@ gunicorn = "*"
 google-api-python-client = "*"
 google-auth-httplib2 = "*"
 google-auth-oauthlib = "*"
+ipdb = "*"
 
 [requires]
 python_version = "3.7"
