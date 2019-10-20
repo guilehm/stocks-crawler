@@ -170,7 +170,6 @@ class StockSpider(BaseSpider):
         if save:
             logging.info(f'saving at database for {stock}')
             self.save_data(output, 'fundamentalistAnalysis')
-        logging.info('173', output)
         return output
 
     def extract_data_for_all_stocks(self, save=True, from_db=False):
