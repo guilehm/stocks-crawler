@@ -86,7 +86,7 @@ def stocks_list():
     return jsonify([add_url(convert_id(stock)) for stock in stocks])
 
 
-@app.route('/stocks/sheets/', methods=['GET'])
+@app.route('/stocks/sheets/', methods=['GET', 'POST'])
 def stocks_sheet_list():
     if not SHEET_SPIDER.authenticated:
         return jsonify({
@@ -101,7 +101,7 @@ def stocks_sheet_list():
     return jsonify([convert_decimal(convert_id(stock)) for stock in stocks])
 
 
-@app.route('/stocks/sheets/<string:stock_code>/', methods=['GET'])
+@app.route('/stocks/sheets/<string:stock_code>/', methods=['GET', 'POST'])
 def stocks_sheet_detail(stock_code):
     code = stock_code.upper()
     if request.method == 'POST':
