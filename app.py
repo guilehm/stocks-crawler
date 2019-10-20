@@ -72,7 +72,7 @@ def index():
     })
 
 
-@app.route('/stocks/', methods=['GET', 'POST'])
+@app.route('/stocks/', methods=['GET'])
 def stocks_list():
     if request.method != 'POST':
         stocks = [stock for stock in stocks_collection.find()]
@@ -86,7 +86,7 @@ def stocks_list():
     return jsonify([add_url(convert_id(stock)) for stock in stocks])
 
 
-@app.route('/stocks/sheets/', methods=['GET', 'POST'])
+@app.route('/stocks/sheets/', methods=['GET'])
 def stocks_sheet_list():
     if not SHEET_SPIDER.authenticated:
         return jsonify({
@@ -101,7 +101,7 @@ def stocks_sheet_list():
     return jsonify([convert_decimal(convert_id(stock)) for stock in stocks])
 
 
-@app.route('/stocks/sheets/<string:stock_code>/', methods=['GET', 'POST'])
+@app.route('/stocks/sheets/<string:stock_code>/', methods=['GET'])
 def stocks_sheet_detail(stock_code):
     code = stock_code.upper()
     if request.method == 'POST':
@@ -120,7 +120,7 @@ def analysis_list():
     return jsonify([convert_id(a) for a in stocks_analysis_collection.find()])
 
 
-@app.route('/stocks/<string:stock_code>/analysis/', methods=['GET', 'POST'])
+@app.route('/stocks/<string:stock_code>/analysis/', methods=['GET'])
 def analysis_detail(stock_code):
     code = stock_code.upper()
     analysis = stocks_analysis_collection.find_one({
