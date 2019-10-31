@@ -2,12 +2,15 @@ import logging
 import os
 import sys
 from decimal import Decimal
+
 import pymongo
+from bson.decimal128 import Decimal128
 from flask import Flask, jsonify, request, abort
 
+from fundamentei.api import Fundamentei
 from google_sheets.crawler import SheetCrawler
 from stocks_spider import StockSpider
-from bson.decimal128 import Decimal128
+
 # A GoHorse made app
 
 DEBUG = os.getenv('DEBUG', True)
@@ -36,6 +39,7 @@ stocks_analysis_collection = db.fundamentalistAnalysis
 stocks_sheet_collection = db.stocksSheet
 
 SHEET_SPIDER = SheetCrawler(db=db)
+FUNDAMENTEI = Fundamentei(db=db)
 
 try:
     SHEET_SPIDER._authenticate()
