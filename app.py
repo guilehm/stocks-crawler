@@ -104,6 +104,17 @@ def stocks_v2_list():
     return jsonify([stock for stock in stocks])
 
 
+@app.route('/stocks/v2/<string:stock_code>/')
+def stocks_v2_detail(stock_code):
+    code = stock_code.upper()
+    stock = stocks_hits_collection.find_one({
+        '_highlightResult.tickerSymbolPrefix.value': code
+    })
+    if not stock:
+        return abort(404)
+    return jsonify(convert_id(stock))
+
+
 @app.route('/stocks/sheets/', methods=['GET', 'POST'])
 def stocks_sheet_list():
     if not SHEET_SPIDER.authenticated:
