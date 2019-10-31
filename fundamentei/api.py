@@ -1,5 +1,10 @@
-import requests
+import logging
+import sys
 
+import requests
+from requests import RequestException
+
+logging.basicConfig(stream=sys.stdout, level=logging.INFO)
 
 BASE_URL = 'https://19ba7tbxn5-dsn.algolia.net/1/indexes/*/queries'
 
@@ -20,4 +25,10 @@ class Fundamentei:
         self.query = query
 
     def get_data(self):
-        return requests.post(self.base_url, params=self.params, data=self.query)
+        response = requests.post(self.base_url, params=self.params, data=self.query)
+        try:
+            response.raise_for_status()
+        except RequestException:
+            logging.error(response.text)
+            return
+        return response.json()
