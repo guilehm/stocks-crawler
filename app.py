@@ -75,6 +75,7 @@ def add_url(document):
 def index():
     return jsonify({
         'stocks': f'{request.url}stocks/',
+        'stocksV2': f'{request.url}stocks/v2/',
     })
 
 
