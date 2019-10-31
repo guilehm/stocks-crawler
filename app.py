@@ -36,6 +36,8 @@ db = SPIDER.db
 stocks_collection = db.stocks
 stocks_analysis_collection = db.fundamentalistAnalysis
 
+stocks_hits_collection = db.hits
+
 stocks_sheet_collection = db.stocksSheet
 
 SHEET_SPIDER = SheetCrawler(db=db)
@@ -88,6 +90,12 @@ def stocks_list():
             })
         stocks = SPIDER.parse_stocks(save=True)
     return jsonify([add_url(convert_id(stock)) for stock in stocks])
+
+
+@app.route('/stocks/v2/', methods=['GET'])
+def stocks_v2_list():
+    stocks = [stock for stock in stocks_hits_collection.find()]
+    return jsonify([stock for stock in stocks])
 
 
 @app.route('/stocks/sheets/', methods=['GET', 'POST'])
