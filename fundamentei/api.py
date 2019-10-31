@@ -32,3 +32,7 @@ class Fundamentei:
             logging.error(response.text)
             return
         return response.json()
+
+    def get_results(self):
+        data = self.get_data()
+        return data['results'][0]['hits']
