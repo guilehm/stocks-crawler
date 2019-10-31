@@ -44,7 +44,7 @@ class Fundamentei:
         data = self.get_data(page=page)
         return data['results'][0]['hits']
 
-    def get_all_results(self, update_db=False):
+    def get_all_results(self, update_db=False, drop_old_collection=True):
         self.results = []
         for page in range(100):
             results = self.get_results(page=page)
@@ -52,15 +52,18 @@ class Fundamentei:
                 break
             self.results += results
         if update_db:
-            self.save_data(self.results, 'hits')
+            self.save_data(self.results, 'hits', drop_old_collection=drop_old_collection)
         return self.results
 
-    def save_data(self, data, collection):
+    def save_data(self, data, collection, drop_old_collection=False):
         if not self.db:
             logging.error('Could not save data. Please choose a database')
             return
         collection = self.db[collection]
         many = not isinstance(data, dict) and len(data) > 1
+
+        if drop_old_collection:
+            collection.drop()
 
         if many:
             return collection.insert_many(data)
