@@ -23,15 +23,21 @@ class Fundamentei:
         self.base_url = base_url
         self.params = params
         self.query = query
+        self.data = None
 
-    def get_data(self):
+    def get_data(self, force_update=False):
+        if self.data and not force_update:
+            return self.data
+
         response = requests.post(self.base_url, params=self.params, data=self.query)
         try:
             response.raise_for_status()
         except RequestException:
             logging.error(response.text)
             return
-        return response.json()
+
+        self.data = response.json()
+        return self.data
 
     def get_results(self):
         data = self.get_data()
