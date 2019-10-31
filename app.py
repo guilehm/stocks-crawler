@@ -92,9 +92,12 @@ def stocks_list():
     return jsonify([add_url(convert_id(stock)) for stock in stocks])
 
 
-@app.route('/stocks/v2/', methods=['GET'])
+@app.route('/stocks/v2/', methods=['GET', 'POST'])
 def stocks_v2_list():
-    stocks = [stock for stock in stocks_hits_collection.find()]
+    if request.method != 'POST':
+        stocks = [stock for stock in stocks_hits_collection.find()]
+    else:
+        stocks = FUNDAMENTEI.get_all_results(update_db=True)
     return jsonify([stock for stock in stocks])
 
 
