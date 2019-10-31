@@ -19,10 +19,11 @@ query = '{"requests":[{"indexName":"assets","params":"' \
 
 
 class Fundamentei:
-    def __init__(self, base_url=BASE_URL, params=params, query=query):
+    def __init__(self, base_url=BASE_URL, params=params, query=query, db=None):
         self.base_url = base_url
         self.params = params
         self.query = query
+        self.db = db
         self.results = []
 
     def get_data(self, force_update=False, page=0):
@@ -43,11 +44,24 @@ class Fundamentei:
         data = self.get_data(page=page)
         return data['results'][0]['hits']
 
-    def get_all_results(self):
+    def get_all_results(self, update_db=False):
         self.results = []
         for page in range(100):
             results = self.get_results(page=page)
             if not results:
                 break
             self.results += results
+        if update_db:
+            self.save_data(self.results, 'hits')
         return self.results
+
+    def save_data(self, data, collection):
+        if not self.db:
+            logging.error('Could not save data. Please choose a database')
+            return
+        collection = self.db[collection]
+        many = not isinstance(data, dict) and len(data) > 1
+
+        if many:
+            return collection.insert_many(data)
+        return collection.insert_one(data)
