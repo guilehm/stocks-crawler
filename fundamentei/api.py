@@ -15,7 +15,7 @@ params = {
 }
 
 query = '{"requests":[{"indexName":"assets","params":"' \
-        'query=&hitsPerPage=100&page=0&facetFilters=%5B%5B%22type%3ABRAZILIAN_COMPANY%22%5D%5D"}]}'
+        'query=&hitsPerPage=100&page=NUM_PAGE&facetFilters=%5B%5B%22type%3ABRAZILIAN_COMPANY%22%5D%5D"}]}'
 
 
 class Fundamentei:
@@ -24,12 +24,17 @@ class Fundamentei:
         self.params = params
         self.query = query
         self.data = None
+        self.results = None
 
-    def get_data(self, force_update=False):
+    def get_data(self, force_update=False, page=0):
         if self.data and not force_update:
             return self.data
 
-        response = requests.post(self.base_url, params=self.params, data=self.query)
+        response = requests.post(
+            self.base_url,
+            params=self.params,
+            data=self.query.replace('NUM_PAGE', str(page))
+        )
         try:
             response.raise_for_status()
         except RequestException:
