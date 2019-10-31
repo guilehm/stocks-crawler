@@ -23,13 +23,9 @@ class Fundamentei:
         self.base_url = base_url
         self.params = params
         self.query = query
-        self.data = None
-        self.results = None
+        self.results = []
 
     def get_data(self, force_update=False, page=0):
-        if self.data and not force_update:
-            return self.data
-
         response = requests.post(
             self.base_url,
             params=self.params,
@@ -41,9 +37,17 @@ class Fundamentei:
             logging.error(response.text)
             return
 
-        self.data = response.json()
-        return self.data
+        return response.json()
 
-    def get_results(self):
-        data = self.get_data()
+    def get_results(self, page=0):
+        data = self.get_data(page=page)
         return data['results'][0]['hits']
+
+    def get_all_results(self):
+        self.results = []
+        for page in range(100):
+            results = self.get_results(page=page)
+            if not results:
+                break
+            self.results += results
+        return self.results
