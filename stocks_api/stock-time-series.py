@@ -19,7 +19,12 @@ class StockTimeSeries:
 
     def _build_url(self, **params):
         endpoint = f'{self.base_url}/query'
-        parameters = params.update({'apikey': self.token})
+        parameters = {
+            'function': 'TIME_SERIES_INTRADAY',
+            'outputsize': 'full',
+            'apikey': self.token,
+        }
+        parameters.update(**params)
         return PreparedRequest().prepare_url(endpoint, parameters).url
 
     def get_response(self, **params):
