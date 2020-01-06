@@ -17,10 +17,14 @@ class StockTimeSeries:
         self.token = STOCK_TIME_SERIES_TOKEN
         self.response = None
 
-    def get_response(self, **params):
+    def _build_url(self, **params):
         endpoint = f'{self.base_url}/query'
-        prepared_url = PreparedRequest().prepare_url(endpoint, params).url
-        response = requests.get(prepared_url)
+        parameters = params.update({'apikey': self.token})
+        return PreparedRequest().prepare_url(endpoint, parameters).url
+
+    def get_response(self, **params):
+        url = self._build_url(**params)
+        response = requests.get(url)
         try:
             response.raise_for_status()
         except requests.RequestException:
