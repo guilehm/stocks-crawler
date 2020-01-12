@@ -8,6 +8,7 @@ from flask import Flask, jsonify, request, abort
 from google_sheets.crawler import SheetCrawler
 from stocks_spider import StockSpider
 from bson.decimal128 import Decimal128
+
 # A GoHorse made app
 
 DEBUG = os.getenv('DEBUG', True)
@@ -144,6 +145,19 @@ def stocks_detail(stock_code):
     if not stock:
         return abort(404)
     return jsonify(convert_id(stock))
+
+
+@app.route('/stocks/intraday/<string:stock_code>/')
+def stocks_detail_intraday(stock_code):
+    interval = request.args.get('interval', '60')
+    function = request.args.get('function', 'TIME_SERIES_INTRADAY')
+    symbol = request.args.get('symbol')
+    if not symbol:
+        return jsonify({
+            'error': True,
+            'message': 'Parameter "symbol" is required.',
+        }), 400
+    return jsonify({'teste': True})
 
 
 if __name__ == '__main__':
