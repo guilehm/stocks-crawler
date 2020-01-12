@@ -1,6 +1,7 @@
 import logging
 import os
 import sys
+from json import JSONDecodeError
 
 import requests
 from requests.models import PreparedRequest
@@ -33,13 +34,14 @@ class StockTimeSeries:
         return PreparedRequest().prepare_url(endpoint, parameters).url
 
     def get_response(self, **params):
+        self._validate()
         url = self._build_url(**params)
-        response = requests.get(url)
+        self.response = requests.get(url)
+
         try:
-            response.raise_for_status()
-        except requests.RequestException:
+            json_response = self.response.json()
+        except JSONDecodeError:
             logging.error('Could not request to the API', exc_info=True)
             raise
 
-        self.response = response
-        return self.response.json()
+        return json_response
