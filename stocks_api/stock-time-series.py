@@ -17,6 +17,11 @@ class StockTimeSeries:
         self.token = STOCK_TIME_SERIES_TOKEN
         self.response = None
 
+    def _validate(self):
+        if not self.token or not self.base_url:
+            raise Exception('Could not validate Stock Time Series credentials.')
+        return True
+
     def _build_url(self, **params):
         endpoint = f'{self.base_url}/query'
         parameters = {
