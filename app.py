@@ -2,9 +2,12 @@ import logging
 import os
 import sys
 from decimal import Decimal
+
 import pymongo
+from bson.decimal128 import Decimal128
 from flask import Flask, jsonify, request, abort
 
+from fundamentei.api import Fundamentei
 from google_sheets.crawler import SheetCrawler
 from stocks_spider import StockSpider
 from stocks_api.stock_time_series import StockTimeSeries
@@ -35,9 +38,12 @@ db = SPIDER.db
 stocks_collection = db.stocks
 stocks_analysis_collection = db.fundamentalistAnalysis
 
+stocks_hits_collection = db.hits
+
 stocks_sheet_collection = db.stocksSheet
 
 SHEET_SPIDER = SheetCrawler(db=db)
+FUNDAMENTEI = Fundamentei(db=db)
 
 try:
     SHEET_SPIDER._authenticate()
@@ -71,10 +77,13 @@ def add_url(document):
 def index():
     return jsonify({
         'stocks': f'{request.url}stocks/',
+        'stocksV2': f'{request.url}stocks/v2/',
+        'stocksSheets': f'{request.url}stocks/sheets/',
+        'stocksAnalysis': f'{request.url}stocks/analysis/',
     })
 
 
-@app.route('/stocks/', methods=['GET', 'POST'])
+@app.route('/stocks/', methods=['GET'])
 def stocks_list():
     if request.method != 'POST':
         stocks = [stock for stock in stocks_collection.find()]
@@ -86,6 +95,26 @@ def stocks_list():
             })
         stocks = SPIDER.parse_stocks(save=True)
     return jsonify([add_url(convert_id(stock)) for stock in stocks])
+
+
+@app.route('/stocks/v2/', methods=['GET', 'POST'])
+def stocks_v2_list():
+    if request.method != 'POST':
+        stocks = [stock for stock in stocks_hits_collection.find()]
+    else:
+        stocks = FUNDAMENTEI.get_all_results(update_db=True)
+    return jsonify([stock for stock in stocks])
+
+
+@app.route('/stocks/v2/<string:stock_code>/')
+def stocks_v2_detail(stock_code):
+    code = stock_code.upper()
+    stock = stocks_hits_collection.find_one({
+        '_highlightResult.tickerSymbolPrefix.value': code
+    })
+    if not stock:
+        return abort(404)
+    return jsonify(convert_id(stock))
 
 
 @app.route('/stocks/sheets/', methods=['GET', 'POST'])
@@ -122,7 +151,7 @@ def analysis_list():
     return jsonify([convert_id(a) for a in stocks_analysis_collection.find()])
 
 
-@app.route('/stocks/<string:stock_code>/analysis/', methods=['GET', 'POST'])
+@app.route('/stocks/<string:stock_code>/analysis/', methods=['GET'])
 def analysis_detail(stock_code):
     code = stock_code.upper()
     analysis = stocks_analysis_collection.find_one({

@@ -102,9 +102,11 @@ class SheetCrawler:
         if not data:
             raise Exception('No data found')
         time = datetime.utcnow() - timedelta(hours=3)
-        formatted_values = ((format_value(method, value) for method, value in zip(
+
+        formatted_values = ((method(value) for method, value in zip(
             headers_info.values(), row,
         )) for row in data)
+
         self.stocks = [Stock(*values, time.isoformat()) for values in islice(formatted_values, 1, None)]
         if save:
             self.save_data(
