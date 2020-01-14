@@ -10,6 +10,8 @@ from flask import Flask, jsonify, request, abort
 from fundamentei.api import Fundamentei
 from google_sheets.crawler import SheetCrawler
 from stocks_spider import StockSpider
+from stocks_api.stock_time_series import StockTimeSeries
+from bson.decimal128 import Decimal128
 
 # A GoHorse made app
 
@@ -173,6 +175,19 @@ def stocks_detail(stock_code):
     if not stock:
         return abort(404)
     return jsonify(convert_id(stock))
+
+
+@app.route('/stocks/intraday/<string:stock_code>/')
+def stocks_detail_intraday(stock_code):
+    interval = request.args.get('interval', '60min')
+    stock_time_series = StockTimeSeries()
+    stock_time_series.get_response(
+        symbol=stock_code,
+        interval=interval,
+    )
+    return jsonify(
+        stock_time_series.response
+    ), stock_time_series.status_code
 
 
 if __name__ == '__main__':
