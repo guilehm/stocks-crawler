@@ -12,7 +12,7 @@ from google.auth.transport.requests import Request
 from googleapiclient.discovery import build
 from requests.exceptions import RequestException
 
-from google_sheets.models import Stock, format_value, headers_info
+from google_sheets.models import Stock, headers_info
 
 SCOPES = ('https://www.googleapis.com/auth/spreadsheets.readonly',)
 SPREADSHEET_ID = os.getenv('SPREADSHEET_ID')
