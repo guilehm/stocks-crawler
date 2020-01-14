@@ -8,6 +8,7 @@ from requests.models import PreparedRequest
 
 STOCK_TIME_SERIES_ENDPOINT = os.getenv('STOCK_TIME_SERIES_ENDPOINT')
 STOCK_TIME_SERIES_TOKEN = os.getenv('STOCK_TIME_SERIES_TOKEN')
+VALIDATION_KEYS = ['Global Quote', 'Meta Data']
 
 logging.basicConfig(stream=sys.stdout, level=logging.INFO)
 
@@ -25,7 +26,6 @@ class StockTimeSeries:
         return True
 
     def _validate_response(self, response):
-
         try:
             json_response = response.json()
         except JSONDecodeError:
@@ -35,7 +35,7 @@ class StockTimeSeries:
             self.status_code = 500
             return self.response
 
-        if 'Meta Data' not in json_response:
+        if not any([key in json_response for key in VALIDATION_KEYS]):
             message = 'Bad Request.'
             self.response = {'error': True, 'message': message}
             self.status_code = 400
