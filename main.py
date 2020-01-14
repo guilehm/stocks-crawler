@@ -1,4 +1,5 @@
 import click
+
 from stocks_spider import StockSpider
 
 

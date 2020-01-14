@@ -5,13 +5,12 @@ from decimal import Decimal
 
 import pymongo
 from bson.decimal128 import Decimal128
-from flask import Flask, jsonify, request, abort
+from flask import Flask, abort, jsonify, request
 
 from fundamentei.api import Fundamentei
 from google_sheets.crawler import SheetCrawler
-from stocks_spider import StockSpider
 from stocks_api.stock_time_series import StockTimeSeries
-from bson.decimal128 import Decimal128
+from stocks_spider import StockSpider
 
 # A GoHorse made app
 
