@@ -39,7 +39,6 @@ class StockTimeSeries:
             message = 'Bad Request.'
             self.response = {'error': True, 'message': message}
             self.status_code = 400
-            breakpoint()
             return self.response
 
         self.response = json_response
