@@ -37,7 +37,7 @@ class StockTimeSeries:
             self.status_code = 500
             return self.response
 
-        if not any([key in json_response for key in VALIDATION_KEYS]):
+        if not any((key in json_response for key in VALIDATION_KEYS)):
             message = 'Bad Request.'
             self.response = {'error': True, 'message': message}
             self.status_code = 400
