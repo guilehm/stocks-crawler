@@ -190,5 +190,17 @@ def stocks_detail_intraday(stock_code):
     ), stock_time_series.status_code
 
 
+@app.route('/stocks/global-quote/<string:stock_code>/')
+def stocks_detail_global_quote(stock_code):
+    stock_time_series = StockTimeSeries()
+    stock_time_series.get_response(
+        symbol=stock_code,
+        function='GLOBAL_QUOTE',
+    )
+    return jsonify(
+        stock_time_series.response
+    ), stock_time_series.status_code
+
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=DEBUG)
