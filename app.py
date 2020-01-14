@@ -190,6 +190,18 @@ def stocks_detail_intraday(stock_code):
     ), stock_time_series.status_code
 
 
+@app.route('/stocks/daily/<string:stock_code>/')
+def stocks_detail_daily(stock_code):
+    stock_time_series = StockTimeSeries()
+    stock_time_series.get_response(
+        symbol=stock_code,
+        function='TIME_SERIES_DAILY',
+    )
+    return jsonify(
+        stock_time_series.response
+    ), stock_time_series.status_code
+
+
 @app.route('/stocks/global-quote/<string:stock_code>/')
 def stocks_detail_global_quote(stock_code):
     stock_time_series = StockTimeSeries()
