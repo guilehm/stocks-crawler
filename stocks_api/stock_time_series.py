@@ -22,7 +22,9 @@ class StockTimeSeries:
 
     def _validate_api(self):
         if not self.token or not self.base_url:
-            raise Exception('Could not validate Stock Time Series credentials.')
+            message = 'Could not validate Stock Time Series credentials.'
+            logging.error(message)
+            raise Exception(message)
         return True
 
     def _validate_response(self, response):
