@@ -18,6 +18,7 @@ class FundsCrawler:
     def __init__(self, base_url=FUNDS_EXPLORER_URL, db=None):
         self.base_url = base_url
         self.response = None
+        self.url = None
         self.db = db
 
     def _prepare_url(self, endpoint, **params):
@@ -58,7 +59,9 @@ class FundsCrawler:
     def parse_funds_detail(self, symbol, endpoint=ENDPOINT_FUNDS_DETAIL, **params):
         complete_endpoint = endpoint.format(symbol=symbol)
         response = self.get_response(endpoint=complete_endpoint, **params)
-        main_indicators = response.xpath('.//div[@id="main-indicators-carousel"]//div[@class="carousel-cell"]')
+        main_indicators = response.xpath(
+            './/div[@id="main-indicators-carousel"]//div[@class="carousel-cell"]'
+        )
 
         def get_main_indicators_data(res):
             title = res.xpath('./span[@class="indicator-title"]/text()').get('').strip()
