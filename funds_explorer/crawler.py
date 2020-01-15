@@ -11,6 +11,7 @@ logging.basicConfig(stream=sys.stdout, level=logging.INFO)
 
 FUNDS_EXPLORER_URL = os.getenv('FUNDS_EXPLORER_URL')
 ENDPOINT_FUNDS_LIST = '/funds'
+ENDPOINT_FUNDS_DETAIL = '/funds/{symbol}'
 
 
 class FundsCrawler:
@@ -48,5 +49,16 @@ class FundsCrawler:
         funds_list = response.xpath(
             '//div[@id="fiis-list-container"]/div/div[contains(@id, "item-")]'
         )
-        funds_data = [extract_fund_data(fund) for fund in funds_list]
-        return funds_data
+        return list(map(extract_fund_data, funds_list))
+
+    def parse_funds_detail(self, symbol, endpoint=ENDPOINT_FUNDS_DETAIL, **params):
+        complete_endpoint = endpoint.format(symbol=symbol)
+        response = self.get_response(endpoint=complete_endpoint, **params)
+        main_indicators = response.xpath('.//div[@id="main-indicators-carousel"]//div[@class="carousel-cell"]')
+
+        def get_main_indicators_data(res):
+            title = res.xpath('./span[@class="indicator-title"]/text()').get('').strip()
+            value = res.xpath('./span[@class="indicator-value"]/text()').get('').strip()
+            return {title: value}
+
+        return list(map(get_main_indicators_data, main_indicators))
