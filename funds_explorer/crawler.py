@@ -18,11 +18,15 @@ class FundsCrawler:
         self.response = None
         self.db = db
 
-    def _get_response(self, endpoint, **params):
+    def _prepare_url(self, endpoint, **params):
         url = f'{self.base_url}/{endpoint}'
         prepared_request = PreparedRequest()
         prepared_request.prepare_url(url, params)
-        response = requests.get(prepared_request.url)
+        return prepared_request.url
+
+    def _get_response(self, endpoint, **params):
+        url = self._prepare_url(endpoint, **params)
+        response = requests.get(url)
         try:
             response.raise_for_status()
         except RequestException:
