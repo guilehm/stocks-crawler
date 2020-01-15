@@ -26,14 +26,18 @@ class FundsCrawler:
         prepared_request.prepare_url(url, params)
         return prepared_request.url
 
-    def get_response(self, endpoint, **params):
+    def get_response(self, endpoint, force_update=False, **params):
         url = self._prepare_url(endpoint, **params)
+        if self.response and not force_update and self.url == url:
+            return self.response
         response = requests.get(url)
         try:
             response.raise_for_status()
         except RequestException:
+            self.response = None
             logging.error('Could not request', exc_info=True)
         else:
+            self.url = url
             self.response = Selector(text=response.text)
         return self.response
 
