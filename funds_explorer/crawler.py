@@ -10,6 +10,7 @@ from scrapy.selector import Selector
 logging.basicConfig(stream=sys.stdout, level=logging.INFO)
 
 FUNDS_EXPLORER_URL = os.getenv('FUNDS_EXPLORER_URL')
+ENDPOINT_FUNDS_LIST = '/funds'
 
 
 class FundsCrawler:
@@ -24,7 +25,7 @@ class FundsCrawler:
         prepared_request.prepare_url(url, params)
         return prepared_request.url
 
-    def _get_response(self, endpoint, **params):
+    def get_response(self, endpoint, **params):
         url = self._prepare_url(endpoint, **params)
         response = requests.get(url)
         try:
@@ -34,3 +35,18 @@ class FundsCrawler:
         else:
             self.response = Selector(text=response.text)
         return self.response
+
+    def parse_funds_list(self, endpoint=ENDPOINT_FUNDS_LIST, **params):
+        def extract_fund_data(item):
+            return dict(
+                name=item.xpath('.//span[@class="name"]/text()').get(),
+                symbol=item.xpath('.//span[@class="symbol"]/text()').get(),
+                admin=item.xpath('.//span[@class="admin"]/text()').get('').strip(),
+            )
+
+        response = self.get_response(endpoint, **params)
+        funds_list = response.xpath(
+            '//div[@id="fiis-list-container"]/div/div[contains(@id, "item-")]'
+        )
+        funds_data = [extract_fund_data(fund) for fund in funds_list]
+        return funds_data
