@@ -213,5 +213,10 @@ def stocks_detail_global_quote(stock_code):
     ), stock_time_series.status_code
 
 
+@app.route('/funds/')
+def funds_list():
+    return jsonify(FUNDS.parse_ranking_table())
+
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=DEBUG)
