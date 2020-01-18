@@ -11,6 +11,7 @@ from fundamentei.api import Fundamentei
 from google_sheets.crawler import SheetCrawler
 from stocks_api.stock_time_series import StockTimeSeries
 from stocks_spider import StockSpider
+from funds_explorer.crawler import FundsCrawler
 
 # A GoHorse made app
 
@@ -43,6 +44,7 @@ stocks_sheet_collection = db.stocksSheet
 
 SHEET_SPIDER = SheetCrawler(db=db)
 FUNDAMENTEI = Fundamentei(db=db)
+FUNDS = FundsCrawler(db=db)
 
 try:
     SHEET_SPIDER._authenticate()
