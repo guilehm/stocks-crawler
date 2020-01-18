@@ -61,7 +61,7 @@ class FundsCrawler:
         def extract_main_indicators_data(res):
             title = res.xpath('./span[@class="indicator-title"]/text()').get('').strip()
             value = res.xpath('./span[@class="indicator-value"]/text()').get('').strip()
-            return {title: value}
+            return title, value
 
         complete_endpoint = endpoint.format(symbol=symbol)
         response = self.get_response(endpoint=complete_endpoint, **params)
@@ -69,7 +69,7 @@ class FundsCrawler:
             './/div[@id="main-indicators-carousel"]//div[@class="carousel-cell"]'
         )
 
-        return list(map(extract_main_indicators_data, main_indicators))
+        return dict((key, value) for key, value in map(extract_main_indicators_data, main_indicators))
 
     def parse_ranking_table(self, endpoint=ENDPOINT_RANKING_TABLE, **params):
         def merge_headers_and_values(header, td):
