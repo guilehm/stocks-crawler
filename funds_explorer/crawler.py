@@ -81,4 +81,4 @@ class FundsCrawler:
         # TODO: find a way to add a whitespace after <br/> tag
         headers = thead.xpath('string()').getall()
         trs = table.xpath('.//tbody/tr')
-        return merge_headers_and_values(headers, trs.xpath('.//text()[normalize-space()]').getall())
+        return [merge_headers_and_values(headers, tr.xpath('.//text()[normalize-space()]').getall()) for tr in trs]
