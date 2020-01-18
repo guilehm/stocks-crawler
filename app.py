@@ -8,10 +8,10 @@ from bson.decimal128 import Decimal128
 from flask import Flask, abort, jsonify, request
 
 from fundamentei.api import Fundamentei
+from funds_explorer.crawler import FundsCrawler
 from google_sheets.crawler import SheetCrawler
 from stocks_api.stock_time_series import StockTimeSeries
 from stocks_spider import StockSpider
-from funds_explorer.crawler import FundsCrawler
 
 # A GoHorse made app
 
