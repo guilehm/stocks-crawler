@@ -81,6 +81,10 @@ def index():
         'stocksV2': f'{request.url}stocks/v2/',
         'stocksSheets': f'{request.url}stocks/sheets/',
         'stocksAnalysis': f'{request.url}stocks/analysis/',
+        'stocksIntraday': f'{request.url}stocks/intraday/<code>',
+        'stocksDaily': f'{request.url}stocks/daily/<code>',
+        'globalQuote': f'{request.url}stocks/global-quote/<code>',
+        'funds': f'{request.url}funds/',
     })
 
 
