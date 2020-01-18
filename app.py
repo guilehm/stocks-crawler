@@ -223,6 +223,23 @@ def stocks_detail_global_quote(stock_code):
 
 @app.route('/funds/')
 def funds_list():
+    return jsonify(FUNDS.parse_funds_list())
+
+
+@app.route('/funds/<string:symbol>/')
+def funds_detail(symbol):
+    code = symbol.upper()
+    try:
+        response = FUNDS.parse_funds_detail(symbol=code)
+    except AttributeError:
+        response = dict(error=True, message='Please, choose a valid symbol')
+        return jsonify(response), 400
+
+    return jsonify(response)
+
+
+@app.route('/funds/ranking')
+def funds_ranking_list():
     return jsonify(FUNDS.parse_ranking_table())
 
 
