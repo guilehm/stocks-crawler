@@ -10,8 +10,9 @@ from scrapy.selector import Selector
 logging.basicConfig(stream=sys.stdout, level=logging.INFO)
 
 FUNDS_EXPLORER_URL = os.getenv('FUNDS_EXPLORER_URL')
-ENDPOINT_FUNDS_LIST = '/funds'
-ENDPOINT_FUNDS_DETAIL = '/funds/{symbol}'
+ENDPOINT_FUNDS_LIST = 'funds'
+ENDPOINT_FUNDS_DETAIL = 'funds/{symbol}'
+ENDPOINT_RANKING_TABLE = 'ranking'
 
 
 class FundsCrawler:
