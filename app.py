@@ -226,6 +226,11 @@ def funds_list():
     return jsonify(FUNDS.parse_funds_list())
 
 
+@app.route('/funds/ranking/')
+def funds_ranking_list():
+    return jsonify(FUNDS.parse_ranking_table())
+
+
 @app.route('/funds/<string:symbol>/')
 def funds_detail(symbol):
     code = symbol.upper()
@@ -236,11 +241,6 @@ def funds_detail(symbol):
         return jsonify(response), 400
 
     return jsonify(response)
-
-
-@app.route('/funds/ranking')
-def funds_ranking_list():
-    return jsonify(FUNDS.parse_ranking_table())
 
 
 if __name__ == '__main__':
