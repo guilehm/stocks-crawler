@@ -58,15 +58,27 @@ class FundsCrawler:
         return list(map(extract_fund_data, funds_list))
 
     def parse_funds_detail(self, symbol, endpoint=ENDPOINT_FUNDS_DETAIL, **params):
+        def extract_main_indicators_data(res):
+            title = res.xpath('./span[@class="indicator-title"]/text()').get('').strip()
+            value = res.xpath('./span[@class="indicator-value"]/text()').get('').strip()
+            return {title: value}
+
         complete_endpoint = endpoint.format(symbol=symbol)
         response = self.get_response(endpoint=complete_endpoint, **params)
         main_indicators = response.xpath(
             './/div[@id="main-indicators-carousel"]//div[@class="carousel-cell"]'
         )
 
-        def get_main_indicators_data(res):
-            title = res.xpath('./span[@class="indicator-title"]/text()').get('').strip()
-            value = res.xpath('./span[@class="indicator-value"]/text()').get('').strip()
-            return {title: value}
+        return list(map(extract_main_indicators_data, main_indicators))
 
-        return list(map(get_main_indicators_data, main_indicators))
+    def parse_ranking_table(self, endpoint=ENDPOINT_RANKING_TABLE, **params):
+        def merge_headers_and_values(header, td):
+            return dict(zip(header, td))
+
+        response = self.get_response(endpoint, **params)
+        table = response.xpath('//table[@id="table-ranking"]')
+        thead = table.xpath('.//thead//tr/th')
+        # TODO: find a way to add a whitespace after <br/> tag
+        headers = thead.xpath('string()').getall()
+        trs = table.xpath('.//tbody/tr')
+        return merge_headers_and_values(headers, trs.xpath('.//text()[normalize-space()]').getall())
