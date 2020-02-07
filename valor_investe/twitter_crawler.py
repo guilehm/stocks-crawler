@@ -1,9 +1,8 @@
-import logging
 import os
-import sys
-
-import requests
 from scrapy.selector import Selector
+import requests
+import sys
+import logging
 
 logging.basicConfig(stream=sys.stdout, level=logging.INFO)
 logging.Formatter('%(asctime)s [%(threadName)-12.12s] [%(levelname)-5.5s]  %(message)s')
@@ -26,3 +25,6 @@ class TwitterCrawler:
                 exc_info=True,
             )
         return self.response
+
+c = TwitterCrawler()
+r = c.get_response()
