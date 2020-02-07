@@ -5,6 +5,7 @@ verify_ssl = true
 
 [dev-packages]
 flake8 = "*"
+pylint = "*"
 
 [packages]
 selenium = "*"
@@ -20,6 +21,7 @@ google-api-python-client = "*"
 google-auth-httplib2 = "*"
 google-auth-oauthlib = "*"
 ipdb = "*"
+apscheduler = "*"
 
 [requires]
 python_version = "3.7"
