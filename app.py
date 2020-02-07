@@ -14,7 +14,6 @@ from stocks_api.stock_time_series import StockTimeSeries
 from stocks_spider import StockSpider
 from valor_investe.twitter_crawler import TwitterCrawler
 
-from apscheduler.schedulers.background import BackgroundScheduler
 
 # A GoHorse made app
 
@@ -256,15 +255,5 @@ def tweet_list():
     return jsonify([convert_id(tweet) for tweet in VALOR_INVESTE.get_all_tweets()])
 
 
-scheduler = BackgroundScheduler()
-
-
-@scheduler.scheduled_job('interval', minutes=5)
-def fetch_tweets():
-    logging.info('Fetching Valor Invest Tweets')
-    VALOR_INVESTE.get_tweets()
-
-
 if __name__ == '__main__':
-    scheduler.start()
     app.run(host='0.0.0.0', debug=DEBUG)
