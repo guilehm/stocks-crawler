@@ -12,7 +12,7 @@ logging.Formatter('%(asctime)s [%(threadName)-12.12s] [%(levelname)-5.5s]  %(mes
 
 URL = os.getenv('VALOR_TWITTER_URL', 'https://twitter.com/valorinveste/')
 MONGO_URL = 'mongodb://localhost:27017/'
-DB_NAME = 'stocks'
+DB_NAME = 'stocksCrawler'
 
 
 class TwitterCrawler:
