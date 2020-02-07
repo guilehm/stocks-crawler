@@ -106,10 +106,10 @@ class StockSpider(BaseSpider):
         data = [text.strip() for text in response.xpath(
             '//span[contains(@class, "rating-result  mrp-shortcode")]/span/text()'
         ).getall()]
-        data = [convert_to_float(text.replace('/10', '').strip('(').strip(')')) for text in data]
+        rate, votes = [convert_to_float(text.replace('/10', '').strip('(').strip(')')) for text in data]
         return dict(
-            rate=data[0],
-            votes=data[1],
+            rate=rate,
+            votes=votes,
         )
 
     def parse_fundamentalist_analysis_video(self, stock, url=None):
