@@ -36,7 +36,7 @@ class TwitterCrawler:
             )
             return {'error': True, 'message': message}
         return self.response
-    
+
     def _create_tweets_data(self, tweets):
         return ({
             'title': tweet.xpath('./text()').get(),
@@ -59,3 +59,7 @@ class TwitterCrawler:
                     upsert=True,
                 )
         return [tweet for tweet in tweets_data]
+
+    def get_all_tweets(self):
+        self.get_tweets()
+        return [tweet for tweet in self.db['tweets'].find()]
