@@ -12,6 +12,7 @@ from funds_explorer.crawler import FundsCrawler
 from google_sheets.crawler import SheetCrawler
 from stocks_api.stock_time_series import StockTimeSeries
 from stocks_spider import StockSpider
+from valor_investe.twitter_crawler import TwitterCrawler
 
 # A GoHorse made app
 
@@ -33,14 +34,18 @@ SPIDER = StockSpider(
     db_name=db_name,
     retry_writes='false',
 )
+VALOR_INVESTE = TwitterCrawler(
+    mongo_url=MONGODB_URI,
+    db_name=db_name,
+    retry_writes='false',
+)
 
 db = SPIDER.db
 stocks_collection = db.stocks
 stocks_analysis_collection = db.fundamentalistAnalysis
-
 stocks_hits_collection = db.hits
-
 stocks_sheet_collection = db.stocksSheet
+tweets_collection = db.tweets
 
 SHEET_SPIDER = SheetCrawler(db=db)
 FUNDAMENTEI = Fundamentei(db=db)
@@ -87,6 +92,7 @@ def index():
         'fundsRanking': f'{request.url}funds/ranking/',
         'funds': f'{request.url}funds/',
         'fundsDetail': f'{request.url}funds/<symbol>/',
+        'valorInvesteTweets': f'{request.url}tweets/valorinveste/',
     })
 
 
@@ -241,6 +247,11 @@ def funds_detail(symbol):
         return jsonify(response), 400
 
     return jsonify(response)
+
+
+@app.route('/tweets/valorinveste/')
+def tweet_list():
+    return jsonify([convert_id(tweet) for tweet in VALOR_INVESTE.get_all_tweets()])
 
 
 if __name__ == '__main__':
