@@ -6,7 +6,6 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from app import VALOR_INVESTE
 
 logging.basicConfig(stream=sys.stdout, level=logging.INFO)
-
 scheduler = BackgroundScheduler()
 
 
