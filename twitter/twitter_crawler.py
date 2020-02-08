@@ -44,16 +44,15 @@ class TwitterCrawler:
     def _create_tweets_data(self, headers, containers):
         tweets = zip(headers, containers)
         return ({
-            'dataUserId': header.xpath('./a').attrib['data-user-id'],
-            'avatar': header.xpath('./a/img[@src]/@src').get(),
-            'username': self.username,
-            'dataTime': header.xpath('./small[@class="time"]/a/span/@data-time').get(),
-            'dataTitle': header.xpath('./small[@class="time"]/a/@title').get(),
-            'source': self.url,
             'title': ''.join(container.xpath('string()').getall()),
-            # 'title': container.xpath('./text()[normalize-space()]').get('').strip(),
             'link': container.xpath('./a[@data-expanded-url]/@href').get(),
-            'dateExtract': datetime.utcnow() - timedelta(hours=3),
+            'avatar': header.xpath('./a/img[@src]/@src').get(),
+            'source': self.url,
+            'username': self.username,
+            'dataUserId': header.xpath('./a').attrib['data-user-id'],
+            'dateCrawl': datetime.utcnow() - timedelta(hours=3),
+            'date': header.xpath('./small[@class="time"]/a/span/@data-time').get(),
+            'dateTitle': header.xpath('./small[@class="time"]/a/@title').get(),
         } for header, container in tweets)
 
     def get_tweets(self, username, save=True):
