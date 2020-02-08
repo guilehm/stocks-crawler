@@ -29,23 +29,26 @@ class TwitterCrawler:
             response.raise_for_status()
             self.response = Selector(text=response.text)
         except requests.RequestException:
-            message = 'Could not request to Valor Investe Twitter URL'
+            message = f'Could not request to {self.url}'
             logging.exception(
                 message,
                 exc_info=True,
             )
-            return {'error': True, 'message': message}
+            raise
         return self.response
 
     def _create_tweets_data(self, tweets):
         return ({
+            'source': self.url,
             'title': tweet.xpath('./text()').get(),
-            'link': tweet.xpath('./a').attrib['data-expanded-url'] if tweet.xpath('./a') else None,
+            'link': tweet.xpath('./a[@data-expanded-url]/@href').get(None),
             'date': datetime.utcnow() - timedelta(hours=3),
         } for tweet in tweets)
 
     def get_tweets(self, save=True):
         self._get_response()
+        if not self.response:
+            return
         tweets = self.response.xpath(
             '//p[@class="TweetTextSize TweetTextSize--normal js-tweet-text tweet-text"]'
         )
