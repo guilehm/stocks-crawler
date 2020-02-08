@@ -10,7 +10,7 @@ from scrapy.selector import Selector
 logging.basicConfig(stream=sys.stdout, level=logging.INFO)
 logging.Formatter('%(asctime)s [%(threadName)-12.12s] [%(levelname)-5.5s]  %(message)s')
 
-URL = os.getenv('VALOR_TWITTER_URL', 'https://twitter.com/valorinveste/')
+URL = os.getenv('VALOR_TWITTER_URL', 'https://twitter.com/Tiagogreis/')
 MONGO_URL = 'mongodb://localhost:27017/'
 DB_NAME = 'stocksCrawler'
 
@@ -65,3 +65,6 @@ class TwitterCrawler:
     def get_all_tweets(self):
         self.get_tweets()
         return [tweet for tweet in self.db['tweets'].find()]
+
+# c = TwitterCrawler()
+# r = c.get_tweets()
