@@ -10,25 +10,30 @@ from scrapy.selector import Selector
 logging.basicConfig(stream=sys.stdout, level=logging.INFO)
 logging.Formatter('%(asctime)s [%(threadName)-12.12s] [%(levelname)-5.5s]  %(message)s')
 
-URL = os.getenv('VALOR_TWITTER_URL', 'https://twitter.com/Tiagogreis/')
+USERNAMES = os.getenv('TWITTER_USERNAMES', 'valorinveste infomoney')
 MONGO_URL = 'mongodb://localhost:27017/'
 DB_NAME = 'stocksCrawler'
 
 
 class TwitterCrawler:
-    def __init__(self, url=URL, mongo_url=MONGO_URL, db_name=DB_NAME, retry_writes='true'):
+    def __init__(self, usernames=USERNAMES, mongo_url=MONGO_URL, db_name=DB_NAME, retry_writes='true'):
         self.mongo_client = MongoClient(f'{mongo_url}?retryWrites={retry_writes}')
         self.db = self.mongo_client[db_name]
-        self.url = url
+        self.usernames = usernames.split()
         self.response = None
+        self.base_url = 'https://twitter.com/{username}/'
+        self.url = None
 
-    def _get_response(self):
+    def _get_response(self, username):
+        url = self.base_url.format(username=username)
+        self.url = url
+        self.username = username
         response = requests.get(self.url)
         try:
             response.raise_for_status()
             self.response = Selector(text=response.text)
         except requests.RequestException:
-            message = f'Could not request to {self.url}'
+            message = f'Could not request to {url}'
             logging.exception(
                 message,
                 exc_info=True,
