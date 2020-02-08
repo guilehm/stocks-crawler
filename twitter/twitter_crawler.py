@@ -10,7 +10,7 @@ from scrapy.selector import Selector
 logging.basicConfig(stream=sys.stdout, level=logging.INFO)
 logging.Formatter('%(asctime)s [%(threadName)-12.12s] [%(levelname)-5.5s]  %(message)s')
 
-USERNAMES = os.getenv('TWITTER_USERNAMES', 'valorinveste infomoney')
+USERNAMES = os.getenv('TWITTER_USERNAMES', 'infomoney xp valorinveste')
 MONGO_URL = 'mongodb://localhost:27017/'
 DB_NAME = 'stocksCrawler'
 
@@ -41,22 +41,32 @@ class TwitterCrawler:
             raise
         return self.response
 
-    def _create_tweets_data(self, tweets):
+    def _create_tweets_data(self, headers, containers):
+        tweets = zip(headers, containers)
         return ({
+            'dataUserId': header.xpath('./a').attrib['data-user-id'],
+            'avatar': header.xpath('./a/img[@src]/@src').get(),
+            'username': self.username,
+            'dataTime': header.xpath('./small[@class="time"]/a/span/@data-time').get(),
+            'dataTitle': header.xpath('./small[@class="time"]/a/@title').get(),
             'source': self.url,
-            'title': tweet.xpath('./text()[normalize-space()]').get('').strip(),
-            'link': tweet.xpath('./a[@data-expanded-url]/@href').get(),
-            'date': datetime.utcnow() - timedelta(hours=3),
-        } for tweet in tweets)
+            'title': ''.join(container.xpath('string()').getall()),
+            # 'title': container.xpath('./text()[normalize-space()]').get('').strip(),
+            'link': container.xpath('./a[@data-expanded-url]/@href').get(),
+            'dateExtract': datetime.utcnow() - timedelta(hours=3),
+        } for header, container in tweets)
 
-    def get_tweets(self, save=True):
-        self._get_response()
+    def get_tweets(self, username, save=True):
+        self._get_response(username)
         if not self.response:
             return
-        tweets = self.response.xpath(
+        tweets_header = self.response.xpath(
+            '//div[@class="content"]/div[@class="stream-item-header"]'
+        )
+        tweets_container = self.response.xpath(
             '//p[@class="TweetTextSize TweetTextSize--normal js-tweet-text tweet-text"]'
         )
-        tweets_data = self._create_tweets_data(tweets)
+        tweets_data = self._create_tweets_data(tweets_header, tweets_container)
         if save:
             collection = self.db['tweets']
             for tweet in tweets_data:
@@ -68,8 +78,6 @@ class TwitterCrawler:
         return [tweet for tweet in tweets_data]
 
     def get_all_tweets(self):
-        self.get_tweets()
+        for username in self.usernames:
+            self.get_tweets(username)
         return [tweet for tweet in self.db['tweets'].find()]
-
-# c = TwitterCrawler()
-# r = c.get_tweets()
