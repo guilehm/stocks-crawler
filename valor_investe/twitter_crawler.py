@@ -17,11 +17,10 @@ DB_NAME = 'stocksCrawler'
 
 class TwitterCrawler:
     def __init__(self, url=URL, mongo_url=MONGO_URL, db_name=DB_NAME, retry_writes='true'):
-        self.mongo_client = MongoClient(mongo_url + f'?retryWrites={retry_writes}')
+        self.mongo_client = MongoClient(f'{mongo_url}?retryWrites={retry_writes}')
         self.db = self.mongo_client[db_name]
         self.url = url
         self.response = None
-        self.tweets = set()
 
     def _get_response(self):
         response = requests.get(self.url)
