@@ -39,8 +39,8 @@ class TwitterCrawler:
     def _create_tweets_data(self, tweets):
         return ({
             'source': self.url,
-            'title': tweet.xpath('./text()').get(),
-            'link': tweet.xpath('./a[@data-expanded-url]/@href').get(None),
+            'title': tweet.xpath('./text()[normalize-space()]').get('').strip(),
+            'link': tweet.xpath('./a[@data-expanded-url]/@href').get(),
             'date': datetime.utcnow() - timedelta(hours=3),
         } for tweet in tweets)
 
