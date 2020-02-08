@@ -56,7 +56,7 @@ class TwitterCrawler:
             collection = self.db['tweets']
             for tweet in tweets_data:
                 collection.update_many(
-                    filter={'link': tweet['link']},
+                    filter={'title': tweet['title']},
                     update={'$set': tweet},
                     upsert=True,
                 )
