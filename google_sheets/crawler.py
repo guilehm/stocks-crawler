@@ -56,7 +56,7 @@ class SheetCrawler:
             if creds and creds.expired and creds.refresh_token:
                 creds.refresh(Request())
 
-        self.service = build('sheets', 'v4', credentials=creds)
+        self.service = build('sheets', 'v4', credentials=creds, cache_discovery=False)
         self.authenticated = True
         return self.authenticated
 
