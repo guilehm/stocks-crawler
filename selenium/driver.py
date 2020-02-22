@@ -1,8 +1,8 @@
-
 import os
 
-from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
+
+from selenium import webdriver
 
 CHROME_DRIVER_LOCATION = os.getenv('CHROME_DRIVER_LOCATION')
 
