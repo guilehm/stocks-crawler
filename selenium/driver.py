@@ -4,20 +4,19 @@ from selenium.webdriver.chrome.options import Options
 
 from selenium import webdriver
 
-CHROME_DRIVER_LOCATION = os.getenv('CHROME_DRIVER_LOCATION')
+DRIVER_NAME = os.getenv('DRIVER_NAME', 'chromedriver73')
 
 
 class Driver:
 
-    def __init__(self, location=CHROME_DRIVER_LOCATION, headless=True, user_agent=''):
-        self.location = location
+    def __init__(self, driver_name=DRIVER_NAME, headless=True, user_agent=''):
+        self.location = f'{os.getcwd()}/selenium/chromedriver/{driver_name}'
         self.headless = headless
         self.user_agent = user_agent
 
     def _get_options(self):
         chrome_options = Options()
         chrome_options.add_argument('--no-sandbox')
-        chrome_options.add_argument('--disable-dev-shm-usage')
         if self.user_agent:
             chrome_options.add_argument(f'user-agent={self.user_agent}')
         if self.headless:
@@ -26,7 +25,4 @@ class Driver:
         return chrome_options
 
     def get_driver(self):
-        params = dict(options=self._get_options())
-        if self.location:
-            params.update(drive_location=self.location)
-        return webdriver.Chrome(**params)
+        return webdriver.Chrome(self.location, options=self._get_options())
