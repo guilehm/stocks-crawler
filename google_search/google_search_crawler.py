@@ -1,10 +1,14 @@
 import logging
 import sys
 
-from selenium.common.exceptions import TimeoutException
+from selenium.common.exceptions import TimeoutException, NoSuchElementException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.ui import WebDriverWait
+
+from decimal import Decimal, DecimalException
+
+from datetime import datetime, timedelta
 
 from driver_builder.builder import Driver
 
@@ -33,21 +37,38 @@ class GoogleSearchCrawler:
             (condition, value,)
         ))
 
-    def get_stock_value(self):
+    def _validate_stock_data(self, name, symbol, value, time):
+        try:
+            value_decimal = Decimal(value.text)
+        except DecimalException:
+            value_decimal = None
+            logging.exception(
+                f'Could not convert value {value} to Decimal',
+                exc_info=True,
+            )
+        return dict(
+            name=name.text,
+            symbol=symbol.text,
+            value=value_decimal,
+            time=time.text,
+            crawlDate=datetime.utcnow() - timedelta(hours=3),
+        )
+
+    def get_stock_data(self):
         logging.info(f'Trying to get actual price for {self.symbol}')
         self._get_page()
         try:
             name = self.wait_for_element(By.XPATH, '//div[@class="oPhL2e"]')
-            symbol = self.wait_for_element(By.XPATH, '//div[@class="HfMth"]')
-            value = self.wait_for_element(By.XPATH, '//span[@jsname="vWLAgc"]')
-            return dict(
-                name=name.text,
-                symbol=symbol.text,
-                value=value.text,
-            )
+            symbol = self.driver.find_element_by_xpath('//div[@class="HfMth"]')
+            value = self.driver.find_element_by_xpath('//span[@jsname="vWLAgc"]')
+            time = self.driver.find_element_by_xpath('//span[@jsname="ihIZgd"]')
+        except NoSuchElementException as e:
+            logging.exception(f'Unable to locate element "vWLAgc": {e}')
         except TimeoutException:
-            logging.exception('Could not find element "vWLAgc"', exc_info=True)
+            logging.exception('The element "vWLAgc" was not rendered.')
         except Exception as e:
             logging.exception(f'Could not get element: {e}')
+        else:
+            return self._validate_stock_data(name, symbol, value, time)
         finally:
             self.driver.quit()
