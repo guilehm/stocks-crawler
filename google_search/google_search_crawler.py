@@ -9,6 +9,7 @@ from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.ui import WebDriverWait
 
 from driver_builder.builder import Driver
+from utils.convertions import convert_decimal
 
 logging.basicConfig(stream=sys.stdout, level=logging.INFO)
 
@@ -18,10 +19,18 @@ BASE_URL = 'https://www.google.com/search?' \
 
 class GoogleSearchCrawler:
 
-    def __init__(self, symbol='bidi4'):
-        self.driver = Driver().get_driver()
+    def __init__(self, symbol='bidi4', db=None):
+        self.db = db
         self.symbol = symbol
+        self.driver = Driver().get_driver()
         self.url = BASE_URL.format(symbol=symbol)
+
+    def save_data(self, data, collection='googleSearch'):
+        if not self.db:
+            logging.error('Could not save data. Please choose a database')
+            return
+        collection = self.db[collection]
+        return collection.insert_one(convert_decimal(data))
 
     def _get_page(self):
         self.driver.get(self.url)
@@ -36,12 +45,13 @@ class GoogleSearchCrawler:
         ))
 
     def _validate_stock_data(self, name, symbol, value, time):
+        text_value = value.text.replace('.', '').replace(',', '.')
         try:
-            value_decimal = Decimal(value.text)
+            value_decimal = Decimal(text_value)
         except DecimalException:
             value_decimal = None
             logging.exception(
-                f'Could not convert value {value} to Decimal',
+                f'Could not convert value {value.text} to Decimal',
                 exc_info=True,
             )
         return dict(
@@ -52,7 +62,7 @@ class GoogleSearchCrawler:
             crawlDate=datetime.utcnow() - timedelta(hours=3),
         )
 
-    def get_stock_data(self):
+    def get_stock_data(self, save=True):
         logging.info(f'Trying to get actual price for {self.symbol}')
         self._get_page()
         try:
@@ -67,6 +77,9 @@ class GoogleSearchCrawler:
         except Exception as e:
             logging.exception(f'Could not get element: {e}')
         else:
-            return self._validate_stock_data(name, symbol, value, time)
+            data = self._validate_stock_data(name, symbol, value, time)
+            if save:
+                self.save_data(data)
+            return data
         finally:
             self.driver.quit()
