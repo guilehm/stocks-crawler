@@ -13,7 +13,7 @@ from google_sheets.crawler import SheetCrawler
 from stocks_api.stock_time_series import StockTimeSeries
 from stocks_spider import StockSpider
 from twitter.twitter_crawler import TwitterCrawler
-
+from google_search.google_search_crawler import GoogleSearchCrawler
 
 # A GoHorse made app
 
@@ -47,6 +47,7 @@ stocks_analysis_collection = db.fundamentalistAnalysis
 stocks_hits_collection = db.hits
 stocks_sheet_collection = db.stocksSheet
 tweets_collection = db.tweets
+google_search_collection = db.googleSearch
 
 SHEET_SPIDER = SheetCrawler(db=db)
 FUNDAMENTEI = Fundamentei(db=db)
@@ -89,6 +90,7 @@ def index():
         'stocksAnalysis': f'{request.url}stocks/analysis/',
         'stocksIntraday': f'{request.url}stocks/intraday/<code>/',
         'stocksDaily': f'{request.url}stocks/daily/<code>/',
+        'stocksGoogleSearch': f'{request.url}stocks/google-search/<code>/',
         'globalQuote': f'{request.url}stocks/global-quote/<code>/',
         'fundsRanking': f'{request.url}funds/ranking/',
         'funds': f'{request.url}funds/',
@@ -253,6 +255,19 @@ def funds_detail(symbol):
 @app.route('/tweets/')
 def tweet_list():
     return jsonify([convert_id(tweet) for tweet in TWITTER_CRAWLER.get_all_tweets()])
+
+
+@app.route('/stocks/google-search/<string:stock_code>/')
+def stocks_google_search_detail(stock_code):
+    try:
+        GoogleSearchCrawler(symbol=stock_code, db=db).get_stock_data()
+    except Exception:
+        return jsonify(dict(error=True, message='Please check the code or try again later')), 400
+    return jsonify([
+        convert_decimal(
+            convert_id(stock)
+        ) for stock in google_search_collection.find({'symbol': stock_code.upper()})
+    ])
 
 
 if __name__ == '__main__':
