@@ -262,7 +262,7 @@ def stocks_google_search_detail(stock_code):
     try:
         GoogleSearchCrawler(symbol=stock_code, db=db).get_stock_data()
     except Exception:
-        return jsonify(dict(error=True, message='Please check the code or try again later')), 400
+        return jsonify(dict(error=True, message='Please check the code or try again later.')), 400
     return jsonify([
         convert_decimal(
             convert_id(stock)
