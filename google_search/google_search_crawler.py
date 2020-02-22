@@ -47,7 +47,8 @@ class GoogleSearchCrawler:
             )
         return dict(
             name=name.text,
-            symbol=symbol.text,
+            symbol=self.symbol.upper(),
+            symbolDetail=symbol.text,
             value=value_decimal,
             time=time.text,
             crawlDate=datetime.utcnow() - timedelta(hours=3),
@@ -72,10 +73,13 @@ class GoogleSearchCrawler:
             time = self.driver.find_element_by_xpath('//span[@jsname="ihIZgd"]')
         except NoSuchElementException as e:
             logging.exception(f'Unable to locate element "vWLAgc": {e}')
+            raise
         except TimeoutException:
             logging.exception('The element "vWLAgc" was not rendered.')
+            raise
         except Exception as e:
             logging.exception(f'Could not get element: {e}')
+            raise
         else:
             data = self._validate_stock_data(name, symbol, value, time)
             if save:
