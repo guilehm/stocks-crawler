@@ -1,8 +1,8 @@
 import os
 
-from driver_builder.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.options import Options
 
-from driver_builder import webdriver
+from selenium import webdriver
 
 DRIVER_NAME = os.getenv('DRIVER_NAME', 'chromedriver73')
 USER_AGENT = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) ' \
@@ -12,7 +12,7 @@ USER_AGENT = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Ge
 class Driver:
 
     def __init__(self, driver_name=DRIVER_NAME, headless=True, user_agent=USER_AGENT):
-        self.location = f'{os.getcwd()}/selenium/chromedriver/{driver_name}'
+        self.location = f'{os.getcwd()}/driver_builder/chromedriver/{driver_name}'
         self.headless = headless
         self.user_agent = user_agent
 
