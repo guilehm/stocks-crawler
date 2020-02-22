@@ -25,6 +25,7 @@ class GoogleSearchCrawler:
         self.driver.get(self.url)
 
     def wait_for_element(self, condition, value, timeout=5):
+        logging.info(f'Waiting for {value}')
         return WebDriverWait(
             driver=self.driver,
             timeout=timeout,
@@ -36,8 +37,14 @@ class GoogleSearchCrawler:
         logging.info(f'Trying to get actual price for {self.symbol}')
         self._get_page()
         try:
-            element = self.wait_for_element(By.XPATH, '//span[@jsname="vWLAgc"]')
-            return element.text
+            name = self.wait_for_element(By.XPATH, '//div[@class="oPhL2e"]')
+            symbol = self.wait_for_element(By.XPATH, '//div[@class="HfMth"]')
+            value = self.wait_for_element(By.XPATH, '//span[@jsname="vWLAgc"]')
+            return dict(
+                name=name.text,
+                symbol=symbol.text,
+                value=value.text,
+            )
         except TimeoutException:
             logging.exception('Could not find element "vWLAgc"', exc_info=True)
         except Exception as e:
