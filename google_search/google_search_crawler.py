@@ -35,15 +35,6 @@ class GoogleSearchCrawler:
     def _get_page(self):
         self.driver.get(self.url)
 
-    def wait_for_element(self, condition, value, timeout=5):
-        logging.info(f'Waiting for {value}')
-        return WebDriverWait(
-            driver=self.driver,
-            timeout=timeout,
-        ).until(expected_conditions.presence_of_element_located(
-            (condition, value,)
-        ))
-
     def _validate_stock_data(self, name, symbol, value, time):
         text_value = value.text.replace('.', '').replace(',', '.')
         try:
@@ -61,6 +52,15 @@ class GoogleSearchCrawler:
             time=time.text,
             crawlDate=datetime.utcnow() - timedelta(hours=3),
         )
+
+    def wait_for_element(self, condition, value, timeout=5):
+        logging.info(f'Waiting for {value}')
+        return WebDriverWait(
+            driver=self.driver,
+            timeout=timeout,
+        ).until(expected_conditions.presence_of_element_located(
+            (condition, value,)
+        ))
 
     def get_stock_data(self, save=True):
         logging.info(f'Trying to get actual price for {self.symbol}')
