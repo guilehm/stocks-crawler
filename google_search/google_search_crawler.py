@@ -1,14 +1,12 @@
 import logging
 import sys
+from datetime import datetime, timedelta
+from decimal import Decimal, DecimalException
 
 from selenium.common.exceptions import TimeoutException, NoSuchElementException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.ui import WebDriverWait
-
-from decimal import Decimal, DecimalException
-
-from datetime import datetime, timedelta
 
 from driver_builder.builder import Driver
 
