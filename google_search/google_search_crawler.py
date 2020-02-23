@@ -40,7 +40,7 @@ class GoogleSearchCrawler:
 
     def _validate_stock_data(self, name, symbol, value, time):
         text_value = value.text
-        if THOUSAND_SEPARATOR == '.':
+        if THOUSAND_SEPARATOR == ',':
             text_value = text_value.replace(',', '')
         else:
             text_value = text_value.replace('.', '').replace(',', '.')
