@@ -41,9 +41,9 @@ class GoogleSearchCrawler:
     def _validate_stock_data(self, name, symbol, value, time):
         text_value = value.text
         if THOUSAND_SEPARATOR == '.':
-            text_value.replace(',', '')
+            text_value = text_value.replace(',', '')
         else:
-            text_value.replace('.', '').replace(',', '.')
+            text_value = text_value.replace('.', '').replace(',', '.')
         try:
             value_decimal = Decimal(text_value)
         except DecimalException:
