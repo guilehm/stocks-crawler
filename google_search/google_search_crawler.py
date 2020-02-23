@@ -16,13 +16,16 @@ logging.basicConfig(stream=sys.stdout, level=logging.INFO)
 BASE_URL = 'https://www.google.com/search?' \
            'q={symbol}&oq={symbol}&aqs=chrome.0.69i59j69i60l3j0l2.1532j1j7&sourceid=chrome&ie=UTF-8'
 
+DECIMAL_SEPARATOR = os.getenv('DECIMAL_SEPARATOR', ',')
+THOUSAND_SEPARATOR = os.getenv('DECIMAL_SEPARATOR', '.')
+
 
 class GoogleSearchCrawler:
 
-    def __init__(self, symbol='bidi4', db=None):
+    def __init__(self, symbol='bidi4', db=None, headless=True):
         self.db = db
         self.symbol = symbol
-        self.driver = Driver().get_driver()
+        self.driver = Driver(headless=headless).get_driver()
         self.url = BASE_URL.format(symbol=symbol)
 
     def save_data(self, data, collection='googleSearch'):
