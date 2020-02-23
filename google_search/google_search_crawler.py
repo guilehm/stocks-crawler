@@ -1,4 +1,5 @@
 import logging
+import os
 import sys
 from datetime import datetime, timedelta
 from decimal import Decimal, DecimalException
@@ -16,8 +17,7 @@ logging.basicConfig(stream=sys.stdout, level=logging.INFO)
 BASE_URL = 'https://www.google.com/search?' \
            'q={symbol}&oq={symbol}&aqs=chrome.0.69i59j69i60l3j0l2.1532j1j7&sourceid=chrome&ie=UTF-8'
 
-DECIMAL_SEPARATOR = os.getenv('DECIMAL_SEPARATOR', ',')
-THOUSAND_SEPARATOR = os.getenv('DECIMAL_SEPARATOR', '.')
+THOUSAND_SEPARATOR = os.getenv('THOUSAND_SEPARATOR', '.')
 
 
 class GoogleSearchCrawler:
@@ -39,7 +39,11 @@ class GoogleSearchCrawler:
         self.driver.get(self.url)
 
     def _validate_stock_data(self, name, symbol, value, time):
-        text_value = value.text.replace('.', '').replace(',', '.')
+        text_value = value.text
+        if THOUSAND_SEPARATOR == '.':
+            text_value.replace(',', '')
+        else:
+            text_value.replace('.', '').replace(',', '.')
         try:
             value_decimal = Decimal(text_value)
         except DecimalException:
