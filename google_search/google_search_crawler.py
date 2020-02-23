@@ -49,7 +49,7 @@ class GoogleSearchCrawler:
         except DecimalException:
             value_decimal = None
             logging.exception(
-                f'Could not convert value {value.text} to Decimal',
+                f'Could not convert value {value.text} to Decimal from {text_value}',
                 exc_info=True,
             )
         return dict(
