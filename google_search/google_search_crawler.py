@@ -38,7 +38,8 @@ class GoogleSearchCrawler:
     def _get_page(self):
         self.driver.get(self.url)
 
-    def _validate_stock_data(self, name, symbol, value, time):
+    @staticmethod
+    def convert_to_decimal(value):
         text_value = value.text
         if THOUSAND_SEPARATOR == ',':
             text_value = text_value.replace(',', '')
@@ -52,6 +53,10 @@ class GoogleSearchCrawler:
                 f'Could not convert value {value.text} to Decimal from {text_value}',
                 exc_info=True,
             )
+        return value_decimal
+
+    def _validate_stock_data(self, name, symbol, value, time):
+        value_decimal = self.convert_to_decimal(value)
         return dict(
             name=name.text,
             symbol=self.symbol.upper(),
