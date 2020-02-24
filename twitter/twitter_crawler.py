@@ -10,7 +10,7 @@ from scrapy.selector import Selector
 logging.basicConfig(stream=sys.stdout, level=logging.INFO)
 logging.Formatter('%(asctime)s [%(threadName)-12.12s] [%(levelname)-5.5s]  %(message)s')
 
-USERNAMES = os.getenv('TWITTER_USERNAMES', 'infomoney xp valorinveste')
+USERNAMES = os.getenv('TWITTER_USERNAMES', 'infomoney xpinvestimentos valorinveste')
 MONGO_URL = 'mongodb://localhost:27017/'
 DB_NAME = 'stocksCrawler'
 
@@ -51,7 +51,7 @@ class TwitterCrawler:
             'username': self.username,
             'dataUserId': header.xpath('./a').attrib['data-user-id'],
             'dateCrawl': datetime.utcnow() - timedelta(hours=3),
-            'date': header.xpath('./small[@class="time"]/a/span/@data-time').get(),
+            'date': int(header.xpath('./small[@class="time"]/a/span/@data-time').get()),
             'dateTitle': header.xpath('./small[@class="time"]/a/@title').get(),
         } for header, container in tweets)
 
@@ -79,4 +79,4 @@ class TwitterCrawler:
     def get_all_tweets(self):
         for username in self.usernames:
             self.get_tweets(username)
-        return [tweet for tweet in self.db['tweets'].find()]
+        return [tweet for tweet in self.db['tweets'].find().sort([('date', -1)])]
