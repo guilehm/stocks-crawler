@@ -17,3 +17,9 @@ def convert_decimal_for_response(document):
         elif type(value) == Decimal128:
             document[key] = float(str(value))
     return document
+
+
+def convert_id(document):
+    if document.get('_id'):
+        document['_id'] = str(document['_id'])
+    return document

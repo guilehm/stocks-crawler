@@ -12,7 +12,7 @@ from google_sheets.crawler import SheetCrawler
 from stocks_api.stock_time_series import StockTimeSeries
 from stocks_spider import StockSpider
 from twitter.twitter_crawler import TwitterCrawler
-from utils.convertions import convert_decimal_for_response
+from utils.helpers import convert_decimal_for_response, convert_id
 
 # A GoHorse made app
 
@@ -56,12 +56,6 @@ try:
     SHEET_SPIDER._authenticate()
 except Exception as e:
     logging.error(e)
-
-
-def convert_id(document):
-    if document.get('_id'):
-        document['_id'] = str(document['_id'])
-    return document
 
 
 def add_url(document):

@@ -10,7 +10,7 @@ from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.ui import WebDriverWait
 
 from driver_builder.builder import Driver
-from utils.convertions import convert_decimal_for_db
+from utils.helpers import convert_decimal_for_db
 
 logging.basicConfig(stream=sys.stdout, level=logging.INFO)
 
