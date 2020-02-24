@@ -59,7 +59,7 @@ except Exception as e:
     logging.error(e)
 
 
-def convert_decimal(document):
+def convert_decimal_for_response(document):
     for key, value in document.items():
         if type(value) == Decimal:
             document[key] = float(value)
@@ -145,7 +145,7 @@ def stocks_sheet_list():
     else:
         logging.info('Fetching data from Google Sheet')
         stocks = SHEET_SPIDER.get_stock_data(save=True, as_dict=True, force_update=True)
-    return jsonify([convert_decimal(convert_id(stock)) for stock in stocks])
+    return jsonify([convert_decimal_for_response(convert_id(stock)) for stock in stocks])
 
 
 @app.route('/stocks/sheets/<string:stock_code>/', methods=['GET', 'POST'])
@@ -159,7 +159,7 @@ def stocks_sheet_detail(stock_code):
     )
     if not stock:
         return abort(404)
-    return jsonify(convert_decimal(convert_id(stock)))
+    return jsonify(convert_decimal_for_response(convert_id(stock)))
 
 
 @app.route('/stocks/analysis/')
@@ -265,7 +265,7 @@ def stocks_google_search_detail(stock_code):
         logging.exception(e)
         return jsonify(dict(error=True, message='Please check the code or try again later.')), 400
     return jsonify([
-        convert_decimal(
+        convert_decimal_for_response(
             convert_id(stock)
         ) for stock in google_search_collection.find({'symbol': stock_code.upper()})
     ])
