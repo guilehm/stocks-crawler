@@ -1,19 +1,18 @@
 import logging
 import os
 import sys
-from decimal import Decimal
 
 import pymongo
-from bson.decimal128 import Decimal128
 from flask import Flask, abort, jsonify, request
 
 from fundamentei.api import Fundamentei
 from funds_explorer.crawler import FundsCrawler
+from google_search.google_search_crawler import GoogleSearchCrawler
 from google_sheets.crawler import SheetCrawler
 from stocks_api.stock_time_series import StockTimeSeries
 from stocks_spider import StockSpider
 from twitter.twitter_crawler import TwitterCrawler
-from google_search.google_search_crawler import GoogleSearchCrawler
+from utils.convertions import convert_decimal_for_response
 
 # A GoHorse made app
 
@@ -57,15 +56,6 @@ try:
     SHEET_SPIDER._authenticate()
 except Exception as e:
     logging.error(e)
-
-
-def convert_decimal_for_response(document):
-    for key, value in document.items():
-        if type(value) == Decimal:
-            document[key] = float(value)
-        elif type(value) == Decimal128:
-            document[key] = float(str(value))
-    return document
 
 
 def convert_id(document):
