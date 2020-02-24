@@ -1,19 +1,18 @@
 import logging
 import os
 import sys
-from decimal import Decimal
 
 import pymongo
-from bson.decimal128 import Decimal128
 from flask import Flask, abort, jsonify, request
 
 from fundamentei.api import Fundamentei
 from funds_explorer.crawler import FundsCrawler
+from google_search.google_search_crawler import GoogleSearchCrawler
 from google_sheets.crawler import SheetCrawler
 from stocks_api.stock_time_series import StockTimeSeries
 from stocks_spider import StockSpider
 from twitter.twitter_crawler import TwitterCrawler
-from google_search.google_search_crawler import GoogleSearchCrawler
+from utils.helpers import convert_decimal_for_response, convert_id, add_url
 
 # A GoHorse made app
 
@@ -57,28 +56,6 @@ try:
     SHEET_SPIDER._authenticate()
 except Exception as e:
     logging.error(e)
-
-
-def convert_decimal(document):
-    for key, value in document.items():
-        if type(value) == Decimal:
-            document[key] = float(value)
-        elif type(value) == Decimal128:
-            document[key] = float(str(value))
-    return document
-
-
-def convert_id(document):
-    if document.get('_id'):
-        document['_id'] = str(document['_id'])
-    return document
-
-
-def add_url(document):
-    url_root = request.url_root
-    code = document['url'].rsplit('/', 2)[-2]
-    document['analysisUrl'] = f'{url_root}stocks/{code}/analysis/'
-    return document
 
 
 @app.route('/')
@@ -145,7 +122,7 @@ def stocks_sheet_list():
     else:
         logging.info('Fetching data from Google Sheet')
         stocks = SHEET_SPIDER.get_stock_data(save=True, as_dict=True, force_update=True)
-    return jsonify([convert_decimal(convert_id(stock)) for stock in stocks])
+    return jsonify([convert_decimal_for_response(convert_id(stock)) for stock in stocks])
 
 
 @app.route('/stocks/sheets/<string:stock_code>/', methods=['GET', 'POST'])
@@ -159,7 +136,7 @@ def stocks_sheet_detail(stock_code):
     )
     if not stock:
         return abort(404)
-    return jsonify(convert_decimal(convert_id(stock)))
+    return jsonify(convert_decimal_for_response(convert_id(stock)))
 
 
 @app.route('/stocks/analysis/')
@@ -265,7 +242,7 @@ def stocks_google_search_detail(stock_code):
         logging.exception(e)
         return jsonify(dict(error=True, message='Please check the code or try again later.')), 400
     return jsonify([
-        convert_decimal(
+        convert_decimal_for_response(
             convert_id(stock)
         ) for stock in google_search_collection.find({'symbol': stock_code.upper()})
     ])

@@ -10,7 +10,7 @@ from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.ui import WebDriverWait
 
 from driver_builder.builder import Driver
-from utils.convertions import convert_decimal
+from utils.helpers import convert_decimal_for_db
 
 logging.basicConfig(stream=sys.stdout, level=logging.INFO)
 
@@ -33,7 +33,7 @@ class GoogleSearchCrawler:
             logging.error('Could not save data. Please choose a database')
             return
         collection = self.db[collection]
-        return collection.insert_one(convert_decimal(data))
+        return collection.insert_one(convert_decimal_for_db(data))
 
     def _get_page(self):
         self.driver.get(self.url)
