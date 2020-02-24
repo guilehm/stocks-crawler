@@ -12,7 +12,7 @@ from google_sheets.crawler import SheetCrawler
 from stocks_api.stock_time_series import StockTimeSeries
 from stocks_spider import StockSpider
 from twitter.twitter_crawler import TwitterCrawler
-from utils.helpers import convert_decimal_for_response, convert_id
+from utils.helpers import convert_decimal_for_response, convert_id, add_url
 
 # A GoHorse made app
 
@@ -56,13 +56,6 @@ try:
     SHEET_SPIDER._authenticate()
 except Exception as e:
     logging.error(e)
-
-
-def add_url(document):
-    url_root = request.url_root
-    code = document['url'].rsplit('/', 2)[-2]
-    document['analysisUrl'] = f'{url_root}stocks/{code}/analysis/'
-    return document
 
 
 @app.route('/')

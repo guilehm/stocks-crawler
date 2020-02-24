@@ -1,5 +1,5 @@
 from decimal import Decimal
-
+from flask import request
 from bson.decimal128 import Decimal128
 
 
@@ -22,4 +22,11 @@ def convert_decimal_for_response(document):
 def convert_id(document):
     if document.get('_id'):
         document['_id'] = str(document['_id'])
+    return document
+
+
+def add_url(document):
+    url_root = request.url_root
+    code = document['url'].rsplit('/', 2)[-2]
+    document['analysisUrl'] = f'{url_root}stocks/{code}/analysis/'
     return document
