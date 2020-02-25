@@ -4,16 +4,18 @@ networks:
 
 services:
   web:
+    container_name: stocks
     build: .
-    image: "stocks-crawler"
+    image: stocks-crawler
     ports:
-      - "5000:5000"
+      - 5000:5000
     env_file:
        - .env
     depends_on:
       - mongo
 
   mongo:
-    image: "mongo:3.4-jessie"
+    container_name: mongo_stocks
+    image: mongo:3.4-jessie
     ports:
-      - "27017:27017"
+      - 27017:27017
