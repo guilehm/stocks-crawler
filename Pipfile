@@ -9,7 +9,7 @@ pylint = "*"
 
 [packages]
 selenium = "*"
-pymongo = "*"
+pymongo = {extras = ["srv"], version = "*"}
 scrapy = "*"
 ipython = "*"
 requests = "*"
